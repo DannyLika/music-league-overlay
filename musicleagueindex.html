@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music League Overlay</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    iframe {
+      width: 100vw;
+      height: 60vh;
+      border: none;
+    }
+    .info {
+      text-align: center;
+      padding: 10px;
+    }
+    .highlight {
+      background: #1db954;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #000;
+    }
+    .comment-box {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      font-size: 2.4em;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 15px;
+      border-radius: 8px;
+      opacity: 0;
+      animation: fadeInOut 24s linear infinite;
+    }
+
+    @keyframes fadeinout {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      70% { opacity: 1; }
+      80% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <iframe id="ytplayer" src="https://www.youtube.com/embed/NhmvKYbi7iY?autoplay=1&controls=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <div class="info">
+      <h2>1. Cover Songs <span class="highlight">War Pigs</span></h2>
+      <p><strong>Artist:</strong> CAKE</p>
+      <p><strong>Submitter:</strong> Moen</p>
+      <p><strong>Score:</strong> 25</p>
+    </div>
+    <div id="comment" class="comment-box"></div>
+  </div>
+
+  <script>
+    const comments = [
+      "Nacho: I didn't care for this",
+      "schmidkid: I can confirm those fire truck sirens were annoying while driving",
+      "Miller: I love Cake more than cake, but I'm out of votes for you.",
+      "Obi: I can't stand Cake. But this was cool.",
+      "Sassy Cassie: Cake is always a good time",
+      "Bruan TGR: Black Sabbath with a brass-and-acoustic swagger? Count me in. CAKE’s laid-back drawl transforms doomy metal into something simultaneously groovy and sardonic."
+    ];
+
+    let commentBox = document.getElementById('comment');
+    let index = 0;
+
+    function updateComment() {
+      commentBox.style.opacity = 0;
+      setTimeout(() => {
+        commentBox.innerText = comments[index];
+        commentBox.style.opacity = 1;
+      }, 500);
+
+      index = (index + 1) % comments.length;
+    }
+
+    updateComment();
+    setInterval(updateComment, 5000);
+  </script>
+</body>
+</html>
