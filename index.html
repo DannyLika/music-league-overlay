@@ -7,16 +7,20 @@
 </head>
 <body>
 
+  <div class="layout-b">
+    <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+    <div class="info-comment-wrapper">
+      <div class="info" id="songInfo"></div>
+      <div class="comment-box" id="commentBox"></div>
+    </div>
+  </div>
+
   <div class="controls">
     <button onclick="prevSong()">Prev</button>
     <button onclick="togglePlayPause()" id="playPauseBtn">Pause</button>
     <button onclick="nextSong()">Next</button>
   </div>
-
-  <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-  <div class="info" id="songInfo"></div>
-  <div class="comment-box" id="commentBox"></div>
 
   <script>
     let songs = [];
@@ -100,6 +104,5 @@
       document.getElementById('playPauseBtn').innerText = isPaused ? 'Play' : 'Pause';
     }
   </script>
-
 </body>
 </html>
