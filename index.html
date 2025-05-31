@@ -48,7 +48,7 @@
       color: #fff;
       margin: 20px;
       opacity: 0;
-      transition: opacity 1s ease;
+      transition: opacity 1.5s ease;
     }
   </style>
 </head>
@@ -74,14 +74,11 @@
 
     const fallbackVideoId = "dQw4w9WgXcQ";
 
-    <script>
-  const JSON_FILE = 'top3_with_youtube.json';
-  fetch(JSON_FILE)
-    .then(res => res.json())
-    .then(data => {
-      // ...
-
-      .then(res => res.json())
+    fetch('./top3_with_youtube.json')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
         songs = data;
         loadSong(currentIndex);
@@ -93,7 +90,7 @@
 
     function extractYouTubeID(url) {
       if (!url) return '';
-      const match = url.match(/v=([a-zA-Z0-9_-]{11})/);
+      const match = url.match(/(?:[?&]v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
       return match ? match[1] : '';
     }
 
@@ -121,11 +118,11 @@
           commentBox.innerText = comments[commentIndex] || '';
           commentBox.style.opacity = 1;
           commentIndex = (commentIndex + 1) % comments.length;
-        }, 700);
+        }, 700); // small delay before fade-in
       }
 
       showNextComment();
-      commentInterval = setInterval(showNextComment, 6000); // Adjust speed/delay here
+      commentInterval = setInterval(showNextComment, 6000);
     }
 
     function prevSong() {
