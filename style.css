@@ -1,67 +1,4 @@
-body {
-  font-family: sans-serif;
-  background: #000;
-  color: #fff;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 10px;
-  z-index: 2;
-  position: relative;
-}
-
-.controls button {
-  background: #1db954;
-  border: none;
-  padding: 10px 20px;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-#ytplayer {
-  width: 100vw;
-  height: 60vh;
-  border: none;
-  z-index: 1;
-  position: relative;
-}
-
-.info {
-  text-align: center;
-  padding: 10px;
-  z-index: 2;
-  position: relative;
-}
-
-.highlight {
-  background: #1db954;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: #000;
-}
-
-.comment-box {
-  position: absolute;
-  top: 40vh; /* floating over lower portion of video */
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 2em;
-  color: #fff;
-  padding: 10px 20px;
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 1s ease;
-  z-index: 3;
-}
+/* style.css - Layout B */
 
 body {
   font-family: sans-serif;
@@ -77,8 +14,6 @@ body {
   justify-content: center;
   gap: 20px;
   margin: 10px;
-  z-index: 2;
-  position: relative;
 }
 
 .controls button {
@@ -91,83 +26,24 @@ body {
   border-radius: 5px;
 }
 
-#ytplayer {
+iframe {
   width: 100vw;
   height: 60vh;
   border: none;
-  z-index: 1;
-  position: relative;
 }
 
-.info {
-  text-align: center;
-  padding: 10px;
-  z-index: 2;
-  position: relative;
-}
-
-.highlight {
-  background: #1db954;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: #000;
-}
-
-.comment-box {
-  position: absolute;
-  top: 40vh; /* floating over lower portion of video */
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 2em;
-  color: #fff;
-  padding: 10px 20px;
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 1s ease;
-  z-index: 3;
-}
-body {
-  font-family: sans-serif;
-  background: #000;
-  color: #fff;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.controls {
+.bottom-layout {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 10px;
-  z-index: 2;
-  position: relative;
-}
-
-.controls button {
-  background: #1db954;
-  border: none;
-  padding: 10px 20px;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-#ytplayer {
-  width: 100vw;
-  height: 60vh;
-  border: none;
-  z-index: 1;
-  position: relative;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 10px;
+  height: 40vh;
+  box-sizing: border-box;
 }
 
 .info {
-  text-align: center;
+  width: 40%;
   padding: 10px;
-  z-index: 2;
-  position: relative;
 }
 
 .highlight {
@@ -178,18 +54,13 @@ body {
 }
 
 .comment-box {
-  position: absolute;
-  top: 40vh; /* floating over lower portion of video */
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 2em;
-  color: #fff;
-  padding: 10px 20px;
-  background: rgba(0, 0, 0, 0.5);
+  width: 55%;
+  max-height: 100%;
+  overflow-y: auto;
+  font-size: 1.3em;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  border-radius: 8px;
   opacity: 0;
   transition: opacity 1s ease;
-  z-index: 3;
-  box-shadow: 0 0 10px #1db954;
 }
-
