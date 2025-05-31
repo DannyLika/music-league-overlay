@@ -74,7 +74,13 @@
 
     const fallbackVideoId = "dQw4w9WgXcQ";
 
-    fetch('top3.json')
+    <script>
+  const JSON_FILE = 'top3_with_youtube.json';
+  fetch(JSON_FILE)
+    .then(res => res.json())
+    .then(data => {
+      // ...
+
       .then(res => res.json())
       .then(data => {
         songs = data;
