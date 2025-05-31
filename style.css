@@ -1,3 +1,5 @@
+/* style.css - Layout B */
+
 body {
   font-family: sans-serif;
   background: #000;
@@ -30,8 +32,17 @@ iframe {
   border: none;
 }
 
+.bottom-layout {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 10px;
+  height: 40vh;
+  box-sizing: border-box;
+}
+
 .info {
-  text-align: center;
+  width: 40%;
   padding: 10px;
 }
 
@@ -43,10 +54,13 @@ iframe {
 }
 
 .comment-box {
-  max-height: 150px;
+  width: 55%;
+  max-height: 100%;
   overflow-y: auto;
   font-size: 1.3em;
-  margin: 10px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  border-radius: 8px;
   opacity: 0;
   transition: opacity 1s ease;
 }
