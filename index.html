@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Music League Overlay</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <div class="layout-b">
-    <div class="video-container" id="mediaContainer">
-      <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
+    <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
     <div class="info-comment-wrapper">
       <div class="info" id="songInfo"></div>
@@ -30,9 +28,10 @@
     let isPaused = false;
     let commentIndex = 0;
     let commentInterval;
+
     const fallbackVideoId = "dQw4w9WgXcQ";
 
-    fetch('./top3_with_youtube_and_spotify.json')
+    fetch('./top3_with_youtube.json')
       .then(res => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
@@ -55,27 +54,27 @@
     function loadSong(index) {
       clearInterval(commentInterval);
       const song = songs[index];
-      const videoId = extractYouTubeID(song.youtube_url);
-      const player = document.getElementById('ytplayer');
-      const container = document.getElementById('mediaContainer');
+
+      const videoId = extractYouTubeID(song.youtube_url) || '';
+      const spotifyUrl = song.spotify_url;
 
       if (videoId) {
-        container.innerHTML = `<iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1"></iframe>`;
-      } else if (song.spotify_url) {
-        container.innerHTML = `<iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="160" style="width:100%;max-width:660px;border-radius:10px" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/${song.spotify_url}"></iframe>`;
+        document.getElementById('ytplayer').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+      } else if (spotifyUrl) {
+        document.getElementById('ytplayer').src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
       } else {
-        container.innerHTML = `<iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen src="https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1"></iframe>`;
+        document.getElementById('ytplayer').src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
       }
 
       document.getElementById('songInfo').innerHTML = `
-        <h2>${song.round_name} <span class="highlight">${song.song_title}</span></h2>
-        <p><strong>Artist:</strong> ${song.artist}</p>
-        <p><strong>Submitter:</strong> ${song.submitter}</p>
-        <p><strong>Score:</strong> ${song.score}</p>
+        <h2>${song.round_name || 'Unknown Round'} <span class="highlight">${song.song_title || 'Unknown Title'}</span></h2>
+        <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
+        <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
+        <p><strong>Score:</strong> ${song.score || 0}</p>
       `;
 
       const commentBox = document.getElementById("commentBox");
-      const comments = song.comments.split('\n');
+      const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
       commentIndex = 0;
 
       function showNextComment() {
@@ -107,7 +106,6 @@
 
     function togglePlayPause() {
       const iframe = document.getElementById('ytplayer');
-      if (!iframe) return;
       const func = isPaused ? 'playVideo' : 'pauseVideo';
       iframe.contentWindow.postMessage(`{"event":"command","func":"${func}","args":""}`, "*");
       isPaused = !isPaused;
