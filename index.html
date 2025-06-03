@@ -7,8 +7,10 @@
 </head>
 <body>
 
-  <div class="layout-c">
-    <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <div class="layout-b">
+    <div class="video-container" id="mediaContainer">
+      <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
 
     <div class="info-comment-wrapper">
       <div class="info" id="songInfo"></div>
@@ -28,10 +30,9 @@
     let isPaused = false;
     let commentIndex = 0;
     let commentInterval;
-
     const fallbackVideoId = "dQw4w9WgXcQ";
 
-    fetch('./top3_with_youtube.json')
+    fetch('./top3_with_youtube_and_spotify.json')
       .then(res => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
@@ -55,17 +56,15 @@
       clearInterval(commentInterval);
       const song = songs[index];
       const videoId = extractYouTubeID(song.youtube_url);
-      const iframe = document.getElementById('ytplayer');
+      const player = document.getElementById('ytplayer');
+      const container = document.getElementById('mediaContainer');
 
       if (videoId) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+        container.innerHTML = `<iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1"></iframe>`;
       } else if (song.spotify_url) {
-        const spotifyEmbed = song.spotify_url
-          .replace("open.spotify.com", "embed.spotify.com")
-          .replace("/track/", "/embed/track/");
-        iframe.src = spotifyEmbed;
+        container.innerHTML = `<iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" frameborder="0" height="160" style="width:100%;max-width:660px;border-radius:10px" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="https://embed.music.apple.com/us/album/${song.spotify_url}"></iframe>`;
       } else {
-        iframe.src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
+        container.innerHTML = `<iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen src="https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1"></iframe>`;
       }
 
       document.getElementById('songInfo').innerHTML = `
@@ -108,6 +107,7 @@
 
     function togglePlayPause() {
       const iframe = document.getElementById('ytplayer');
+      if (!iframe) return;
       const func = isPaused ? 'playVideo' : 'pauseVideo';
       iframe.contentWindow.postMessage(`{"event":"command","func":"${func}","args":""}`, "*");
       isPaused = !isPaused;
