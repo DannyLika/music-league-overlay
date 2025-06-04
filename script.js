@@ -5,6 +5,8 @@ let commentIndex = 0;
 let commentInterval;
 
 const fallbackVideoId = "dQw4w9WgXcQ";
+console.log("script.js loaded!");
+
 
 fetch('./top3_with_youtube.json')
   .then(res => {
