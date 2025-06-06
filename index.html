@@ -1,45 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta charset="UTF-8" />
-  <title>Music League Overlay</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music League Overlay</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+    }
+
+    select {
+      padding: 12px 20px;
+      font-size: 1.2em;
+      background-color: #1db954;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    select:hover {
+      background-color: #1ed760;
+    }
+
+    option {
+      background-color: #fff;
+      color: #000;
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <a href="index.html" class="logo-link">
-      <img src="logo-placeholder.png" alt="Music League Logo" class="logo">
-    </a>
-    <a href="index.html" class="home-link">🏠 Home</a>
-  </header>
+  <h1>Select a Playlist</h1>
+  <select id="playlistSelect">
+    <option value="">-- Choose a Playlist --</option>
+  <h1>Select a Playlist to View</h1>
+  <select onchange="goToPlaylist(this)">
+    <option disabled selected value="">-- Choose a Playlist --</option>
+<option value="Spring2025_Top3.json">Spring 2025 Top 3</option>
+<option value="Fall2024_Top3.json">Fall 2024 Top 3</option>
+<option value="Summer2024_Top3.json">Summer 2024 Top 3</option>
+<option value="Winter2023_Top3.json">Winter 2023 Top 3</option>
+<option value="Summer2023_Top3.json">Summer 2023 Top 3</option>
+    <option value="Spring2022_Top3.json">Spring 2022 Top 3</option>
+<option value="Summer2022_Top3.json">Summer 2022 Top 3</option>
+    <option value="Spring2022_Top3.json">Spring 2022 Top 3</option>
+<option value="Winter2021_Top3.json">Winter 2021 Top 3</option>
+<option value="Fall2020_Top3.json">Fall 2020 Top 3</option>
+<option value="Summer2020_Top3.json">Summer 2020 Top 3</option>
+</select>
 
-  <div class="layout-b">
-    <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-    <div class="info-comment-wrapper">
-      <div class="info" id="songInfo"></div>
-      <div class="comment-box" id="commentBox"></div>
-    </div>
-  </div>
-
-  <div class="controls">
-    <button onclick="prevSong()">Prev</button>
-    <button onclick="togglePlayPause()" id="playPauseBtn">Pause</button>
-    <button onclick="nextSong()">Next</button>
-  </div>
-
-  <script src="script.js"></script>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const playlistFile = urlParams.get("playlist");
-    const filePath = playlistFile ? `playlists/${playlistFile}` : null;
-
-    if (filePath) {
-      loadPlaylist(filePath);
-    } else {
-      document.getElementById('songInfo').innerText = 'No playlist selected.';
+<script>
+    document.getElementById("playlistSelect").addEventListener("change", function () {
+      const file = this.value;
+    function goToPlaylist(select) {
+      const file = select.value;
+if (file) {
+window.location.href = `player.html?playlist=${file}`;
+}
+    });
     }
-  </script>
+</script>
 </body>
 </html>
