@@ -46,7 +46,7 @@ function loadSong(index) {
 
   document.getElementById('songInfo').innerHTML = `
     <div class="song-meta">
-      <div class="season-round">${song.season_name || 'Unknown Season'} • ${song.round_name || 'Unknown Round'}</div>
+      <div class="season-round">${song.season || 'Unknown Season'} • ${song.round_name || 'Unknown Round'}</div>
       <div class="artist-title">${song.artist || 'Unknown Artist'} – <span class="highlight">${song.song_title || 'Unknown Title'}</span></div>
       <div class="submit-score">Submitted by ${song.submitter || 'Unknown'} • Score: ${song.score || 0}</div>
     </div>
