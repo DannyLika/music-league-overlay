@@ -3,12 +3,29 @@ let currentIndex = 0;
 let isPaused = false;
 let commentIndex = 0;
 let commentInterval;
+let ytPlayer;
 
 const fallbackVideoId = "dQw4w9WgXcQ";
 console.log("script.js loaded!");
 
-function loadPlaylist(filePath) {
-  fetch(filePath)
+// Dynamically load YouTube IFrame API
+let tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.body.appendChild(tag);
+
+// Get playlist file name from URL
+const urlParams = new URLSearchParams(window.location.search);
+const playlistFile = urlParams.get("playlist");
+const filePath = playlistFile ? `playlists/${playlistFile}` : null;
+
+if (filePath) {
+  loadPlaylist(filePath);
+} else {
+  document.getElementById('songInfo').innerText = 'No playlist selected.';
+}
+
+function loadPlaylist(path) {
+  fetch(path)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();
@@ -32,26 +49,25 @@ function extractYouTubeID(url) {
 function loadSong(index) {
   clearInterval(commentInterval);
   const song = songs[index];
-
   const videoId = extractYouTubeID(song.youtube_url) || '';
   const spotifyUrl = song.spotify_url;
 
+  const iframe = document.getElementById('ytplayer');
   if (videoId) {
-    document.getElementById('ytplayer').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
   } else if (spotifyUrl) {
-    document.getElementById('ytplayer').src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
+    iframe.src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
   } else {
-    document.getElementById('ytplayer').src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
+    iframe.src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
   }
 
   document.getElementById('songInfo').innerHTML = `
-    <div class="song-meta">
-      <div class="season-round">${song.season || 'Unknown Season'} • ${song.round_name || 'Unknown Round'}</div>
-      <div class="artist-title">${song.artist || 'Unknown Artist'} – <span class="highlight">${song.song_title || 'Unknown Title'}</span></div>
-      <div class="submit-score">Submitted by ${song.submitter || 'Unknown'} • Score: ${song.score || 0}</div>
-    </div>
+    <h2>${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}</h2>
+    <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
+    <p><strong>Song:</strong> <span class="highlight">${song.song_title || 'Unknown Title'}</span></p>
+    <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
+    <p><strong>Score:</strong> ${song.score || 0}</p>
   `;
-
 
   const commentBox = document.getElementById("commentBox");
   const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
@@ -81,6 +97,8 @@ function nextSong() {
   if (currentIndex < songs.length - 1) {
     currentIndex++;
     loadSong(currentIndex);
+  } else {
+    goToNextPlaylist();
   }
 }
 
@@ -92,12 +110,37 @@ function togglePlayPause() {
   document.getElementById('playPauseBtn').innerText = isPaused ? 'Play' : 'Pause';
 }
 
-// --- Extract query param and load playlist ---
-const params = new URLSearchParams(window.location.search);
-const playlistFile = params.get("playlist");
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('ytplayer', {
+    events: {
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
 
-if (playlistFile) {
-  loadPlaylist(`./playlists/${playlistFile}`);
-} else {
-  document.getElementById('songInfo').innerText = 'No playlist selected';
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {
+    nextSong();
+  }
+}
+
+function getCurrentPlaylistFilename() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("playlist");
+}
+
+function goToNextPlaylist() {
+  const allPlaylists = [
+    "Fall2024_Top3.json",
+    "Spring2025_Top3.json"
+  ];
+  const current = getCurrentPlaylistFilename();
+  const currentIndex = allPlaylists.indexOf(current);
+  const next = allPlaylists[currentIndex + 1];
+
+  if (next) {
+    window.location.href = `player.html?playlist=${next}`;
+  } else {
+    alert("End of all playlists.");
+  }
 }
