@@ -67,8 +67,8 @@ iframe#ytplayer {
 .site-header {
   display: flex;
   align-items: center;
-  padding: 10px 20px;
   background-color: #111;
+  padding: 10px 20px;
   border-bottom: 1px solid #333;
 }
 
@@ -76,14 +76,34 @@ iframe#ytplayer {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #fff;
+  color: white;
   font-size: 1.2em;
+  font-weight: bold;
 }
 
 .logo {
-  height: 32px;
+  height: 30px;
   margin-right: 10px;
 }
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.controls button {
+  background: #1db954;
+  border: none;
+  padding: 10px 20px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 
 /* --- Mobile Responsive Styles --- */
 @media screen and (max-width: 768px) {
@@ -140,5 +160,6 @@ iframe#ytplayer {
     height: 24px;
   }
 }
+
 
 
