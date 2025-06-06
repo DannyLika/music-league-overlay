@@ -89,3 +89,13 @@ function togglePlayPause() {
   isPaused = !isPaused;
   document.getElementById('playPauseBtn').innerText = isPaused ? 'Play' : 'Pause';
 }
+
+// --- Extract query param and load playlist ---
+const params = new URLSearchParams(window.location.search);
+const playlistFile = params.get("playlist");
+
+if (playlistFile) {
+  loadPlaylist(`./playlists/${playlistFile}`);
+} else {
+  document.getElementById('songInfo').innerText = 'No playlist selected';
+}
