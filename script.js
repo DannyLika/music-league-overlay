@@ -8,36 +8,71 @@ let ytPlayer;
 const fallbackVideoId = "dQw4w9WgXcQ";
 console.log("script.js loaded!");
 
-// Dynamically load YouTube IFrame API
-let tag = document.createElement('script');
+// Load YouTube IFrame API
+const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
-// Get playlist file name from URL
+// Get URL Params
 const urlParams = new URLSearchParams(window.location.search);
 const playlistFile = urlParams.get("playlist");
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
+const nextPlaylist = urlParams.get("next");
 
 if (filePath) {
-  loadPlaylist(filePath);
+  loadPlaylist(filePath, nextPlaylist);
 } else {
-  document.getElementById('songInfo').innerText = 'No playlist selected.';
+  fallbackToRickAstley("No playlist selected.");
 }
 
-function loadPlaylist(path) {
+function loadPlaylist(path, nextPlaylist = null) {
   fetch(path)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      songs = data;
+      if (!Array.isArray(data) || data.length === 0) {
+        console.warn("Playlist is empty. Falling back to Rick Astley.");
+        fallbackToRickAstley();
+        return;
+      }
+
+      songs = data.filter(song => song && song.song_title);
+      if (songs.length === 0) {
+        console.warn("No valid songs found. Fallback triggered.");
+        fallbackToRickAstley();
+        return;
+      }
+
+      currentIndex = 0;
       loadSong(currentIndex);
     })
     .catch(err => {
-      document.getElementById('songInfo').innerText = 'Unable to load song data';
-      console.error('JSON load error:', err);
+      console.error("JSON load error:", err);
+      fallbackToRickAstley("Unable to load song data.");
     });
+}
+
+function fallbackToRickAstley(message = '') {
+  const fallbackSong = {
+    song_title: "Never Gonna Give You Up",
+    artist: "Rick Astley",
+    submitter: "Fallback Bot",
+    score: "∞",
+    comments: "You tried to break it, but Rick rolled you instead.",
+    round_name: "Classic Internet Moments",
+    season: "Bonus",
+    spotify_url: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC",
+    youtube_url: `https://www.youtube.com/watch?v=${fallbackVideoId}`
+  };
+
+  songs = [fallbackSong];
+  currentIndex = 0;
+  if (message) {
+    document.getElementById('songInfo').innerText = message;
+  }
+  loadSong(currentIndex);
 }
 
 function extractYouTubeID(url) {
@@ -49,10 +84,11 @@ function extractYouTubeID(url) {
 function loadSong(index) {
   clearInterval(commentInterval);
   const song = songs[index];
-  const videoId = extractYouTubeID(song.youtube_url) || '';
-  const spotifyUrl = song.spotify_url;
 
+  const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
+  const spotifyUrl = song.spotify_url;
   const iframe = document.getElementById('ytplayer');
+
   if (videoId) {
     iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
   } else if (spotifyUrl) {
@@ -125,7 +161,6 @@ function onPlayerStateChange(event) {
 }
 
 function getCurrentPlaylistFilename() {
-  const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get("playlist");
 }
 
@@ -133,6 +168,7 @@ function goToNextPlaylist() {
   const allPlaylists = [
     "Fall2024_Top3.json",
     "Spring2025_Top3.json"
+    // Add more as needed
   ];
   const current = getCurrentPlaylistFilename();
   const currentIndex = allPlaylists.indexOf(current);
