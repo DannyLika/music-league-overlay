@@ -1,59 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Music League Playlists</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #000;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    h1 {
-      color: #1db954;
-      margin-bottom: 20px;
-    }
-    select, button {
-      font-size: 1.2em;
-      padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #1db954;
-      color: #000;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Music League Overlay</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Select a Playlist</h1>
-  <select id="playlistSelect">
-    <option value="ML_2020_Summer.json">ML - 2020 Summer</option>
-    <option value="ML_2020_Fall.json">ML - 2020 Fall</option>
-    <option value="ML_2021_Winter.json">ML - 2021 Winter</option>
-    <option value="ML_2022_Spring.json">ML - 2022 Spring</option>
-    <option value="ML_2022_Summer.json">ML - 2022 Summer</option>
-    <option value="ML_2023_Winter.json">ML - 2023 Winter</option>
-    <option value="ML_2023_Summer.json">ML - 2023 Summer</option>
-    <option value="ML_2024_Spring.json">ML - 2024 Spring</option>
-    <option value="ML_2024_Fall.json">ML - 2024 Fall</option>
-  </select>
-  <button onclick="goToPlayer()">Play Playlist</button>
+  <div class="container">
+    <h1>Select a Playlist</h1>
+    <select id="playlistSelect">
+      <option value="Spring2025_Top3.json">Spring 2025 Top 3</option>
+      <option value="Fall2024_Top3.json">Fall 2024 Top 3</option>
+      <option value="Summer2024_Top3.json">Summer 2024 Top 3</option>
+      <option value="Winter2023_Top3.json">Winter 2023 Top 3</option>
+      <option value="Summer2023_Top3.json">Summer 2023 Top 3</option>
+      <option value="Summer2022_Top3.json">Summer 2022 Top 3</option>
+      <option value="Spring2022_Top3.json">Spring 2022 Top 3</option>
+      <option value="Winter2021_Top3.json">Winter 2021 Top 3</option>
+      <option value="Fall2020_Top3.json">Fall 2020 Top 3</option>
+      <option value="Summer2020_Top3.json">Summer 2020 Top 3</option>
+    </select>
+    <button onclick="launchPlayer()">Play</button>
+  </div>
 
   <script>
-    function goToPlayer() {
-      const playlist = document.getElementById("playlistSelect").value;
-      window.location.href = `player.html?playlist=${playlist}`;
+    function launchPlayer() {
+      const select = document.getElementById('playlistSelect');
+      const selectedFile = select.value;
+      window.location.href = `player.html?playlist=${selectedFile}`;
     }
   </script>
 </body>
