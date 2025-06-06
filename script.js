@@ -45,11 +45,13 @@ function loadSong(index) {
   }
 
   document.getElementById('songInfo').innerHTML = `
-    <h2>${song.round_name || 'Unknown Round'} <span class="highlight">${song.song_title || 'Unknown Title'}</span></h2>
-    <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
-    <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
-    <p><strong>Score:</strong> ${song.score || 0}</p>
+    <div class="song-meta">
+      <div class="season-round">${song.season_name || 'Unknown Season'} • ${song.round_name || 'Unknown Round'}</div>
+      <div class="artist-title">${song.artist || 'Unknown Artist'} – <span class="highlight">${song.song_title || 'Unknown Title'}</span></div>
+      <div class="submit-score">Submitted by ${song.submitter || 'Unknown'} • Score: ${song.score || 0}</div>
+    </div>
   `;
+
 
   const commentBox = document.getElementById("commentBox");
   const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
