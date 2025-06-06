@@ -7,20 +7,21 @@ let commentInterval;
 const fallbackVideoId = "dQw4w9WgXcQ";
 console.log("script.js loaded!");
 
-
-fetch('./top3_with_youtube.json')
-  .then(res => {
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-    return res.json();
-  })
-  .then(data => {
-    songs = data;
-    loadSong(currentIndex);
-  })
-  .catch(err => {
-    document.getElementById('songInfo').innerText = 'Unable to load song data';
-    console.error('JSON load error:', err);
-  });
+function loadPlaylist(filePath) {
+  fetch(filePath)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      songs = data;
+      loadSong(currentIndex);
+    })
+    .catch(err => {
+      document.getElementById('songInfo').innerText = 'Unable to load song data';
+      console.error('JSON load error:', err);
+    });
+}
 
 function extractYouTubeID(url) {
   if (!url) return '';
