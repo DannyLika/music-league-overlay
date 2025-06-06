@@ -21,17 +21,7 @@
     <button onclick="nextSong()">Next</button>
   </div>
 
+  <!-- Only one script tag is needed -->
   <script src="script.js"></script>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const playlistFile = urlParams.get("playlist");
-    const filePath = playlistFile ? `playlists/${playlistFile}` : null;
-
-    if (filePath) {
-      loadPlaylist(filePath);
-    } else {
-      document.getElementById('songInfo').innerText = 'No playlist selected.';
-    }
-  </script>
 </body>
 </html>
