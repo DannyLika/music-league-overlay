@@ -119,6 +119,37 @@ iframe#ytplayer {
   overflow-y: auto;
 }
 
+/* --- Song Data Layout Enhancements --- */
+.song-meta {
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+
+.season-round {
+  font-weight: bold;
+  font-size: 1em;
+  color: #ccc;
+}
+
+.artist-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+.artist-title .highlight {
+  background: #1db954;
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.submit-score {
+  font-size: 0.95em;
+  color: #aaa;
+}
+
 /* --- Responsive Layout --- */
 @media screen and (max-width: 768px) {
   body {
@@ -129,7 +160,8 @@ iframe#ytplayer {
     flex-direction: column;
   }
 
-  .video-wrapper, .info-comment-wrapper {
+  .video-wrapper,
+  .info-comment-wrapper {
     max-width: 100%;
   }
 
@@ -187,5 +219,23 @@ iframe#ytplayer {
     font-size: 0.85em;
     padding: 6px 12px;
     min-width: 70px;
+  }
+
+  .song-meta {
+    text-align: left;
+    margin: 4px 0;
+    line-height: 1.3;
+  }
+
+  .season-round {
+    font-size: 0.85em;
+  }
+
+  .artist-title {
+    font-size: 1em;
+  }
+
+  .submit-score {
+    font-size: 0.8em;
   }
 }
