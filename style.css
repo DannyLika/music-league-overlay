@@ -63,3 +63,25 @@ iframe#ytplayer {
   cursor: pointer;
   border-radius: 5px;
 }
+
+.site-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+.logo {
+  height: 32px;
+  margin-right: 10px;
+}
+
