@@ -94,62 +94,7 @@ iframe#ytplayer {
   margin-right: 10px;
 }
 
-/* --- Mobile Responsive Styles --- */
-@media screen and (max-width: 768px) {
-  .layout-b {
-    flex-direction: column;
-    padding: 0;
-  }
-
-  iframe#ytplayer {
-    width: 100vw;
-    height: 40vh;
-  }
-
-  .info-comment-wrapper {
-    padding: 10px;
-  }
-
-  .info h2 {
-    font-size: 1.2em;
-  }
-
-  .info p {
-    font-size: 0.95em;
-  }
-
-  .comment-box {
-    font-size: 1em;
-    padding: 10px;
-    margin: 10px;
-  }
-
-  .controls {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .controls button {
-    width: 80%;
-    font-size: 1em;
-    padding: 10px;
-  }
-
-  .site-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .logo-link {
-    font-size: 1em;
-  }
-
-  .logo {
-    height: 24px;
-  }
-}
-
+/* --- Desktop Content Layout --- */
 .content {
   display: flex;
   flex: 1;
@@ -165,12 +110,6 @@ iframe#ytplayer {
   padding: 10px;
 }
 
-iframe#ytplayer {
-  width: 100%;
-  height: 70vh;
-  border: none;
-}
-
 .info-comment-wrapper {
   flex: 1;
   display: flex;
@@ -180,8 +119,12 @@ iframe#ytplayer {
   overflow-y: auto;
 }
 
-/* Responsive Layout */
+/* --- Responsive Layout --- */
 @media screen and (max-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+
   .content {
     flex-direction: column;
   }
@@ -191,6 +134,58 @@ iframe#ytplayer {
   }
 
   iframe#ytplayer {
-    height: 40vh;
+    height: 38vh;
+  }
+
+  .site-header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 12px;
+  }
+
+  .logo-link {
+    font-size: 0.9em;
+  }
+
+  .logo {
+    height: 24px;
+  }
+
+  .info-comment-wrapper {
+    padding: 6px 12px;
+    gap: 6px;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .info h2 {
+    font-size: 1em;
+    line-height: 1.2em;
+    margin: 4px 0;
+  }
+
+  .info p {
+    font-size: 0.85em;
+    margin: 2px 0;
+  }
+
+  .comment-box {
+    font-size: 0.9em;
+    height: 2.4em;
+    line-height: 1.2em;
+    padding: 6px;
+  }
+
+  .controls {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .controls button {
+    font-size: 0.85em;
+    padding: 6px 12px;
+    min-width: 70px;
   }
 }
