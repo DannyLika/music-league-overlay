@@ -12,6 +12,12 @@
       <img src="logo-placeholder.png" alt="Music League Logo" class="logo" />
       <span>🏠 Home</span>
     </a>
+
+    <div class="header-controls">
+      <button onclick="prevSong()">⏮</button>
+      <button onclick="togglePlayPause()" id="playPauseBtn">⏯</button>
+      <button onclick="nextSong()">⏭</button>
+    </div>
   </header>
 
   <div class="content">
@@ -23,12 +29,6 @@
       <div class="info" id="songInfo"></div>
       <div class="comment-box" id="commentBox"></div>
     </div>
-  </div>
-
-  <div class="controls">
-    <button onclick="prevSong()">Prev</button>
-    <button onclick="togglePlayPause()" id="playPauseBtn">Pause</button>
-    <button onclick="nextSong()">Next</button>
   </div>
 
   <script src="script.js"></script>
