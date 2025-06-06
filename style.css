@@ -85,3 +85,60 @@ iframe#ytplayer {
   margin-right: 10px;
 }
 
+/* --- Mobile Responsive Styles --- */
+@media screen and (max-width: 768px) {
+  .layout-b {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  iframe#ytplayer {
+    width: 100vw;
+    height: 40vh;
+  }
+
+  .info-comment-wrapper {
+    padding: 10px;
+  }
+
+  .info h2 {
+    font-size: 1.2em;
+  }
+
+  .info p {
+    font-size: 0.95em;
+  }
+
+  .comment-box {
+    font-size: 1em;
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .controls button {
+    width: 80%;
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logo-link {
+    font-size: 1em;
+  }
+
+  .logo {
+    height: 24px;
+  }
+}
+
+
