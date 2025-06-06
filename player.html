@@ -32,6 +32,16 @@
   </div>
 
   <script src="script.js"></script>
-</body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const playlist = params.get("playlist");
+    const nextPlaylist = params.get("next");
 
+    if (playlist) {
+      loadPlaylist(`playlists/${playlist}`, nextPlaylist);
+    } else {
+      document.getElementById('songInfo').innerText = 'No playlist selected.';
+    }
+  </script>
+</body>
 </html>
