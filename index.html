@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
   <meta charset="UTF-8" />
-<title>Music League Overlay</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Music League Overlay</title>
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -46,35 +44,28 @@
   </style>
 </head>
 <body>
-  <h1>Select a Playlist</h1>
-  <select id="playlistSelect">
-    <option value="">-- Choose a Playlist --</option>
   <h1>Select a Playlist to View</h1>
   <select onchange="goToPlaylist(this)">
     <option disabled selected value="">-- Choose a Playlist --</option>
-<option value="Spring2025_Top3.json">Spring 2025 Top 3</option>
-<option value="Fall2024_Top3.json">Fall 2024 Top 3</option>
-<option value="Summer2024_Top3.json">Summer 2024 Top 3</option>
-<option value="Winter2023_Top3.json">Winter 2023 Top 3</option>
-<option value="Summer2023_Top3.json">Summer 2023 Top 3</option>
+    <option value="Spring2025_Top3.json">Spring 2025 Top 3</option>
+    <option value="Fall2024_Top3.json">Fall 2024 Top 3</option>
+    <option value="Summer2024_Top3.json">Summer 2024 Top 3</option>
+    <option value="Winter2023_Top3.json">Winter 2023 Top 3</option>
+    <option value="Summer2023_Top3.json">Summer 2023 Top 3</option>
+    <option value="Summer2022_Top3.json">Summer 2022 Top 3</option>
     <option value="Spring2022_Top3.json">Spring 2022 Top 3</option>
-<option value="Summer2022_Top3.json">Summer 2022 Top 3</option>
-    <option value="Spring2022_Top3.json">Spring 2022 Top 3</option>
-<option value="Winter2021_Top3.json">Winter 2021 Top 3</option>
-<option value="Fall2020_Top3.json">Fall 2020 Top 3</option>
-<option value="Summer2020_Top3.json">Summer 2020 Top 3</option>
-</select>
+    <option value="Winter2021_Top3.json">Winter 2021 Top 3</option>
+    <option value="Fall2020_Top3.json">Fall 2020 Top 3</option>
+    <option value="Summer2020_Top3.json">Summer 2020 Top 3</option>
+  </select>
 
-<script>
-    document.getElementById("playlistSelect").addEventListener("change", function () {
-      const file = this.value;
+  <script>
     function goToPlaylist(select) {
       const file = select.value;
-if (file) {
-window.location.href = `player.html?playlist=${file}`;
-}
-    });
+      if (file) {
+        window.location.href = `player.html?playlist=${file}`;
+      }
     }
-</script>
+  </script>
 </body>
 </html>
