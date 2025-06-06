@@ -7,15 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <header class="site-header">
+    <a href="index.html" class="logo-link">
+      <img src="logo-placeholder.png" alt="Music League Logo" class="logo" />
+      <span>🏠 Home</span>
+    </a>
+  </header>
+
   <div class="layout-b">
     <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-    <header class="site-header">
-  <a href="index.html" class="logo-link">
-    <img src="logo-placeholder.png" alt="Music League Logo" class="logo" />
-    <span>🏠 Home</span>
-  </a>
-</header>
 
     <div class="info-comment-wrapper">
       <div class="info" id="songInfo"></div>
@@ -29,7 +30,6 @@
     <button onclick="nextSong()">Next</button>
   </div>
 
-  <!-- Only one script tag is needed -->
   <script src="script.js"></script>
 </body>
 </html>
