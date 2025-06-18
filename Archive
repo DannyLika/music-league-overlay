@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music League Archive</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="index.html" class="logo-link">
+      <img src="mlp-logo.png" alt="Music League Logo" class="logo" />
+      <span class="brand-text">Music League Player</span>
+    </a>
+  </header>
+
+  <!-- Filter Controls -->
+  <div class="archive-controls">
+    <select id="seasonFilter">
+      <option value="">All Seasons</option>
+    </select>
+
+    <select id="roundFilter">
+      <option value="">All Rounds</option>
+    </select>
+
+    <select id="submitterFilter">
+      <option value="">All Submitters</option>
+    </select>
+
+    <button onclick="applyFilters()">Apply Filters</button>
+    <button onclick="resetFilters()">Reset</button>
+    <button onclick="promptCreatePlaylist()">Create Playlist</button>
+  </div>
+
+  <!-- Archive Table -->
+  <div class="archive-table-container">
+    <table class="archive-table">
+      <thead>
+        <tr>
+          <th>Season</th>
+          <th>Round</th>
+          <th>Title</th>
+          <th>Artist</th>
+          <th>Submitter</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="songTableBody">
+        <!-- Rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Playlist Creation Modal -->
+  <div id="playlistModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Create Playlist</h3>
+      <p id="filterSummary">Create a new playlist using the following filters?</p>
+      <input type="text" id="playlistName" placeholder="Name it (optional)" />
+      <div class="modal-actions">
+        <button onclick="createPlaylist()">Create & Play</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="archive.js"></script>
+</body>
+</html>
