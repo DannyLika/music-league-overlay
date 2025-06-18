@@ -55,7 +55,7 @@
   </div>
 
   <!-- Playlist Creation Modal -->
-  <div id="playlistModal" class="modal" style="display: none;">
+  <div id="playlistModal" class="modal hidden">
     <div class="modal-content">
       <h3>Create Playlist</h3>
       <p id="filterSummary">Create a new playlist using the following filters?</p>
