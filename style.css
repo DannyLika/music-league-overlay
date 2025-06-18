@@ -137,6 +137,81 @@ iframe#ytplayer {
   background: #17a34a;
 }
 
+/* ===== Archive Page Layout ===== */
+.archive-container {
+  padding: 20px;
+  flex: 1;
+  overflow: auto;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-bar select,
+.filter-bar input {
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.95em;
+}
+
+#songTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+#songTable th,
+#songTable td {
+  border: 1px solid #333;
+  padding: 8px;
+  text-align: left;
+}
+
+#songTable th {
+  background-color: #1db954;
+  color: black;
+}
+
+#songTable tr:nth-child(even) {
+  background-color: #222;
+}
+
+#songTable tr:hover {
+  background-color: #333;
+}
+
+.playlist-controls {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.playlist-controls input[type="text"] {
+  padding: 6px;
+  border-radius: 4px;
+  border: none;
+}
+
+.playlist-controls button {
+  background: #1db954;
+  color: black;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.playlist-controls button:hover {
+  background: #17a34a;
+}
+
 /* ===== Mobile Responsive Layout ===== */
 @media screen and (max-width: 768px) {
   .content {
@@ -144,7 +219,8 @@ iframe#ytplayer {
   }
 
   .video-wrapper,
-  .info-comment-wrapper {
+  .info-comment-wrapper,
+  .archive-container {
     max-width: 100%;
   }
 
@@ -199,5 +275,13 @@ iframe#ytplayer {
     font-size: 0.9em;
     padding: 6px 12px;
     min-width: 64px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  #songTable {
+    font-size: 0.85em;
   }
 }
