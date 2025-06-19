@@ -21,16 +21,19 @@ function populateFilters(data) {
   const roundSet = new Set();
   const seasonSet = new Set();
   const submitterSet = new Set();
+  const rankSet = new Set();
 
   data.forEach(song => {
     roundSet.add(song.round_name);
     seasonSet.add(song.season);
     submitterSet.add(song.submitter);
+    rankSet.add(song.rank);
   });
 
   populateSelect("roundFilter", roundSet);
   populateSelect("seasonFilter", seasonSet);
   populateSelect("submitterFilter", submitterSet);
+  populateSelect("rankFilter", rankSet);
 }
 
 function populateSelect(id, values) {
@@ -49,11 +52,13 @@ function applyFilters() {
   const round = document.getElementById("roundFilter").value;
   const season = document.getElementById("seasonFilter").value;
   const submitter = document.getElementById("submitterFilter").value;
+  const rank = document.getElementById("rankFilter").value;
 
   filteredSongs = masterSongs.filter(song => {
     return (!round || song.round_name === round) &&
            (!season || song.season === season) &&
-           (!submitter || song.submitter === submitter);
+           (!submitter || song.submitter === submitter) &&
+           (!rank || song.rank === rank);
   });
 
   renderTable(filteredSongs);
@@ -85,7 +90,8 @@ function confirmPlaylistModal() {
   const filters = {
     round: document.getElementById("roundFilter").value,
     season: document.getElementById("seasonFilter").value,
-    submitter: document.getElementById("submitterFilter").value
+    submitter: document.getElementById("submitterFilter").value,
+    rank: document.getElementById("rankFilter").value
   };
 
   const summary = Object.entries(filters)
@@ -106,18 +112,19 @@ function closeModal() {
 // Proceed with playing or saving playlist
 function createPlaylist() {
   const name = document.getElementById("playlistName").value.trim();
-  const filterParams = new URLSearchParams(window.location.search);
-
-  // For now just redirect with filters in URL
   const params = new URLSearchParams();
+
   if (name) params.set("name", name);
+
   const round = document.getElementById("roundFilter").value;
   const season = document.getElementById("seasonFilter").value;
   const submitter = document.getElementById("submitterFilter").value;
+  const rank = document.getElementById("rankFilter").value;
 
   if (round) params.set("round", round);
   if (season) params.set("season", season);
   if (submitter) params.set("submitter", submitter);
+  if (rank) params.set("rank", rank);
 
   window.location.href = `player.html?${params.toString()}`;
 }
