@@ -2,7 +2,7 @@
 
 let masterSongs = [];
 let filteredSongs = [];
-const masterJSON = "playlists/master_songs.json";
+const masterJSON = "master_songs.json";
 
 // Fetch the master JSON and initialize the app
 fetch(masterJSON)
