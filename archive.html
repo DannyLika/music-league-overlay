@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Music League Archive</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- DataTables CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 </head>
 <body>
 
@@ -21,27 +23,23 @@
     <select id="seasonFilter">
       <option value="">All Seasons</option>
     </select>
-
     <select id="roundFilter">
       <option value="">All Rounds</option>
     </select>
-
     <select id="submitterFilter">
       <option value="">All Submitters</option>
     </select>
-
     <select id="rankFilter">
       <option value="">All Ranks</option>
     </select>
-
     <button onclick="applyFilters()">Apply Filters</button>
     <button onclick="resetFilters()">Reset</button>
-    <button onclick="promptCreatePlaylist()">Create Playlist</button>
+    <button onclick="confirmPlaylistModal()">Create Playlist</button>
   </div>
 
   <!-- Archive Table -->
   <div class="archive-table-container">
-    <table class="archive-table">
+    <table id="songTable" class="archive-table display">
       <thead>
         <tr>
           <th>Season</th>
@@ -50,16 +48,17 @@
           <th>Artist</th>
           <th>Submitter</th>
           <th>Score</th>
+          <th>Rank</th>
         </tr>
       </thead>
       <tbody id="songTableBody">
-        <!-- Rows injected by JS -->
+        <!-- Populated dynamically -->
       </tbody>
     </table>
   </div>
 
-  <!-- Playlist Creation Modal -->
-  <div id="playlistModal" class="modal hidden">
+  <!-- Modal for Playlist Creation -->
+  <div id="modalOverlay" class="modal" style="display: none;">
     <div class="modal-content">
       <h3>Create Playlist</h3>
       <p id="filterSummary">Create a new playlist using the following filters?</p>
@@ -71,6 +70,9 @@
     </div>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="archive.js"></script>
 </body>
 </html>
