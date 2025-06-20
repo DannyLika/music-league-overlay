@@ -2,8 +2,7 @@
 
 let masterSongs = [];
 let filteredSongs = [];
-
-const masterJSON = "master_songs.json";
+const masterJSON = "playlists/master_songs.json";
 
 // Fetch the master JSON and initialize the app
 fetch(masterJSON)
@@ -11,64 +10,73 @@ fetch(masterJSON)
   .then(data => {
     masterSongs = data;
     filteredSongs = [...masterSongs];
-    populateFilters(masterSongs);
+    populateAllFilters(masterSongs);
     renderTable(filteredSongs);
   })
   .catch(err => console.error("Error loading master_songs.json:", err));
 
-// Populate the dropdown filters
-function populateFilters(data) {
-  const roundSet = new Set();
-  const seasonSet = new Set();
-  const submitterSet = new Set();
-  const rankSet = new Set();
-
-  data.forEach(song => {
-    roundSet.add(song.round_name);
-    seasonSet.add(song.season);
-    submitterSet.add(song.submitter);
-    rankSet.add(song.rank);
-  });
-
-  populateSelect("roundFilter", roundSet);
-  populateSelect("seasonFilter", seasonSet);
-  populateSelect("submitterFilter", submitterSet);
-  populateSelect("rankFilter", rankSet);
+// Populate all dropdown filters with unique values
+function populateAllFilters(data) {
+  populateFilter("seasonFilter", [...new Set(data.map(s => s.season))]);
+  populateFilter("roundFilter", [...new Set(data.map(s => s.round_name))]);
+  populateFilter("submitterFilter", [...new Set(data.map(s => s.submitter))]);
+  populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
 }
 
-function populateSelect(id, values) {
+function populateFilter(id, items) {
   const select = document.getElementById(id);
-  values = Array.from(values).sort();
-  values.forEach(value => {
+  select.innerHTML = ''; // clear existing
+  items.forEach(item => {
     const opt = document.createElement("option");
-    opt.value = value;
-    opt.textContent = value;
+    opt.value = item;
+    opt.textContent = item;
     select.appendChild(opt);
   });
 }
 
-// Filter songs when any dropdown changes
+// Get selected values from a <select multiple>
+function getSelectedValues(selectId) {
+  const select = document.getElementById(selectId);
+  return Array.from(select.selectedOptions).map(opt => opt.value);
+}
+
+// Filter songs using all selected filters
 function applyFilters() {
-  const round = document.getElementById("roundFilter").value;
-  const season = document.getElementById("seasonFilter").value;
-  const submitter = document.getElementById("submitterFilter").value;
-  const rank = document.getElementById("rankFilter").value;
+  const seasons = getSelectedValues("seasonFilter");
+  const rounds = getSelectedValues("roundFilter");
+  const submitters = getSelectedValues("submitterFilter");
+  const ranks = getSelectedValues("rankFilter");
 
   filteredSongs = masterSongs.filter(song => {
-    return (!round || song.round_name === round) &&
-           (!season || song.season === season) &&
-           (!submitter || song.submitter === submitter) &&
-           (!rank || song.rank === rank);
+    return (
+      (seasons.length === 0 || seasons.includes(song.season)) &&
+      (rounds.length === 0 || rounds.includes(song.round_name)) &&
+      (submitters.length === 0 || submitters.includes(song.submitter)) &&
+      (ranks.length === 0 || ranks.includes(song.rank))
+    );
   });
 
+  updateAvailableOptions();
   renderTable(filteredSongs);
 }
 
-// Render the filtered songs in a table
+function updateAvailableOptions() {
+  // Dynamically adjust available filter values based on current filtered results
+  populateFilter("roundFilter", [...new Set(filteredSongs.map(s => s.round_name))]);
+  populateFilter("submitterFilter", [...new Set(filteredSongs.map(s => s.submitter))]);
+  populateFilter("rankFilter", [...new Set(filteredSongs.map(s => s.rank))].sort((a, b) => a - b));
+}
+
+function resetFilters() {
+  document.querySelectorAll("select").forEach(sel => sel.selectedIndex = -1);
+  filteredSongs = [...masterSongs];
+  populateAllFilters(masterSongs);
+  renderTable(filteredSongs);
+}
+
 function renderTable(songs) {
   const tbody = document.getElementById("songTableBody");
   tbody.innerHTML = "";
-
   songs.forEach(song => {
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -78,53 +86,45 @@ function renderTable(songs) {
       <td>${song.artist}</td>
       <td>${song.submitter}</td>
       <td>${song.score}</td>
+      <td>${song.rank}</td>
     `;
     tbody.appendChild(row);
   });
-
   document.getElementById("resultCount").textContent = songs.length;
 }
 
-// Trigger the modal to confirm playlist creation
-function confirmPlaylistModal() {
+// Playlist Modal
+function promptCreatePlaylist() {
   const filters = {
-    round: document.getElementById("roundFilter").value,
-    season: document.getElementById("seasonFilter").value,
-    submitter: document.getElementById("submitterFilter").value,
-    rank: document.getElementById("rankFilter").value
+    Season: getSelectedValues("seasonFilter").join(", "),
+    Round: getSelectedValues("roundFilter").join(", "),
+    Submitter: getSelectedValues("submitterFilter").join(", "),
+    Rank: getSelectedValues("rankFilter").join(", ")
   };
 
   const summary = Object.entries(filters)
     .filter(([_, val]) => val)
-    .map(([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${val}`)
+    .map(([key, val]) => `${key}: ${val}`)
     .join(" | ");
 
-  document.getElementById("filterSummary").textContent = summary || "None (playing full list)";
+  document.getElementById("filterSummary").textContent = summary || "None (all songs)";
   document.getElementById("playlistName").value = "";
-  document.getElementById("modalOverlay").style.display = "flex";
+  document.getElementById("playlistModal").style.display = "flex";
 }
 
-// Cancel modal
 function closeModal() {
-  document.getElementById("modalOverlay").style.display = "none";
+  document.getElementById("playlistModal").style.display = "none";
 }
 
-// Proceed with playing or saving playlist
 function createPlaylist() {
   const name = document.getElementById("playlistName").value.trim();
   const params = new URLSearchParams();
 
   if (name) params.set("name", name);
-
-  const round = document.getElementById("roundFilter").value;
-  const season = document.getElementById("seasonFilter").value;
-  const submitter = document.getElementById("submitterFilter").value;
-  const rank = document.getElementById("rankFilter").value;
-
-  if (round) params.set("round", round);
-  if (season) params.set("season", season);
-  if (submitter) params.set("submitter", submitter);
-  if (rank) params.set("rank", rank);
+  getSelectedValues("seasonFilter").forEach(v => params.append("season", v));
+  getSelectedValues("roundFilter").forEach(v => params.append("round", v));
+  getSelectedValues("submitterFilter").forEach(v => params.append("submitter", v));
+  getSelectedValues("rankFilter").forEach(v => params.append("rank", v));
 
   window.location.href = `player.html?${params.toString()}`;
 }
