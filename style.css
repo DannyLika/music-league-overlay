@@ -1,9 +1,56 @@
+/* ===============================
+   Music League Player - style.css
+   Complete styles for layout, branding, archive, player, and responsive design
+   =============================== */
+
+body {
+  font-family: sans-serif;
+  background: #000;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #111;
+  padding: 10px 20px;
+  border-bottom: 1px solid #333;
+  flex-wrap: wrap;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.logo {
+  height: 36px;
+  margin-right: 12px;
+}
+
+.brand-text {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #1db954;
+}
+
 /* ===== Archive Controls ===== */
 .archive-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 20px;
   background: #111;
@@ -38,6 +85,7 @@
 .archive-table-container {
   padding: 20px;
   overflow-x: auto;
+  flex: 1;
 }
 
 .archive-table {
@@ -46,21 +94,27 @@
   color: #fff;
 }
 
+.archive-table thead {
+  background-color: #1db954;
+  color: #000;
+}
+
 .archive-table th,
 .archive-table td {
-  padding: 10px;
+  padding: 10px 14px;
   text-align: left;
+  border-bottom: 1px solid #444;
 }
 
-.archive-table thead {
-  background-color: #222;
-}
-
-.archive-table tbody tr:nth-child(even) {
+.archive-table tr:nth-child(even) {
   background-color: #111;
 }
 
-.archive-table tbody tr:hover {
+.archive-table tr:nth-child(odd) {
+  background-color: #000;
+}
+
+.archive-table tr:hover {
   background-color: #222;
 }
 
@@ -85,6 +139,7 @@
   width: 90%;
   max-width: 400px;
   text-align: center;
+  color: white;
 }
 
 .modal-content h3 {
@@ -96,12 +151,19 @@
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
-  border: none;
+  background: #000;
+  color: #fff;
+  border: 1px solid #555;
   border-radius: 5px;
 }
 
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .modal-actions button {
-  margin: 0 10px;
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
@@ -117,4 +179,29 @@
 .modal-actions button:last-child {
   background-color: #555;
   color: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .archive-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .archive-controls select,
+  .archive-controls button {
+    width: 100%;
+  }
+
+  .modal-content {
+    padding: 16px;
+  }
+
+  .logo {
+    height: 28px;
+  }
+
+  .brand-text {
+    font-size: 1.2em;
+  }
 }
