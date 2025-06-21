@@ -103,6 +103,7 @@ function loadSong(index) {
     <p><strong>Song:</strong> <span class="highlight">${song.song_title || 'Unknown Title'}</span></p>
     <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
     <p><strong>Score:</strong> ${song.score || 0}</p>
+    <p><strong>Rank:</strong> ${song.rank || 0}</p>
   `;
 
   const commentBox = document.getElementById("commentBox");
