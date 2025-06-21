@@ -1,201 +1,126 @@
-let songs = [];
-let currentIndex = 0;
-let isPaused = false;
-let commentIndex = 0;
-let commentInterval;
-let ytPlayer;
+// archive.js – Handles archive filters and playlist creation
 
-const fallbackVideoId = "dQw4w9WgXcQ";
-console.log("script.js loaded!");
+let masterSongs = [];
+let filteredSongs = [];
+const masterJSON = "master_songs.json";
 
-// Load YouTube IFrame API
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.body.appendChild(tag);
+// Load and initialize
+fetch(masterJSON)
+  .then(res => res.json())
+  .then(data => {
+    masterSongs = data;
+    filteredSongs = [...masterSongs];
+    populateAllFilters(masterSongs);
+    renderTable(filteredSongs);
+  })
+  .catch(err => console.error("Failed to load master_songs.json:", err));
 
-// Get URL Params
-const urlParams = new URLSearchParams(window.location.search);
-const fromFilter = urlParams.get("fromFilter") === "1";
-const playlistFile = urlParams.get("playlist");
-const filePath = playlistFile ? `playlists/${playlistFile}` : null;
-const nextPlaylist = urlParams.get("next");
-
-if (fromFilter && localStorage.getItem("filteredPlaylist")) {
-  try {
-    const raw = localStorage.getItem("filteredPlaylist");
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      songs = parsed;
-      currentIndex = 0;
-      loadSong(currentIndex);
-    } else {
-      throw new Error("Invalid playlist data");
-    }
-  } catch (e) {
-    console.error("Failed to load playlist from localStorage:", e);
-    fallbackToRickAstley("Invalid playlist data.");
-  }
-} else if (filePath) {
-  loadPlaylist(filePath, nextPlaylist);
-} else {
-  fallbackToRickAstley("No playlist selected.");
+// Filter setup
+function populateAllFilters(data) {
+  populateFilter("seasonFilter", [...new Set(data.map(s => s.season))]);
+  populateFilter("submitterFilter", [...new Set(data.map(s => s.submitter))]);
+  populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
 }
 
-function loadPlaylist(path, nextPlaylist = null) {
-  fetch(path)
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      if (!Array.isArray(data) || data.length === 0) {
-        console.warn("Playlist is empty. Falling back to Rick Astley.");
-        fallbackToRickAstley();
-        return;
-      }
-
-      songs = data.filter(song => song && song.song_title);
-      if (songs.length === 0) {
-        console.warn("No valid songs found. Fallback triggered.");
-        fallbackToRickAstley();
-        return;
-      }
-
-      currentIndex = 0;
-      loadSong(currentIndex);
-    })
-    .catch(err => {
-      console.error("JSON load error:", err);
-      fallbackToRickAstley("Unable to load song data.");
-    });
-}
-
-function fallbackToRickAstley(message = '') {
-  const fallbackSong = {
-    song_title: "Never Gonna Give You Up",
-    artist: "Rick Astley",
-    submitter: "Fallback Bot",
-    score: "∞",
-    rank: "1",
-    comments: "You tried to break it, but Rick rolled you instead.",
-    round_name: "Classic Internet Moments",
-    season: "Bonus",
-    spotify_url: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC",
-    youtube_url: `https://www.youtube.com/watch?v=${fallbackVideoId}`
-  };
-
-  songs = [fallbackSong];
-  currentIndex = 0;
-  if (message) {
-    const songInfoEl = document.getElementById('songInfo');
-      if (songInfoEl) songInfoEl.innerText = message;
-  }
-  loadSong(currentIndex);
-}
-
-function extractYouTubeID(url) {
-  if (!url) return '';
-  const match = url.match(/(?:[?&]v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : '';
-}
-
-function loadSong(index) {
-  clearInterval(commentInterval);
-  const song = songs[index];
-
-  const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
-  const spotifyUrl = song.spotify_url;
-  const iframe = document.getElementById('ytplayer');
-
-  if (videoId) {
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-  } else if (spotifyUrl) {
-    iframe.src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
-  } else {
-    iframe.src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
-  }
-
-  document.getElementById('songInfo').innerHTML = `
-    <h2>${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}</h2>
-    <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
-    <p><strong>Song:</strong> <span class="highlight">${song.song_title || 'Unknown Title'}</span></p>
-    <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
-    <p><strong>Score:</strong> ${song.score || 0}</p>
-    <p><strong>Rank:</strong> ${song.rank || 0}</p>
-  `;
-
-  const commentBox = document.getElementById("commentBox");
-  const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
-  commentIndex = 0;
-
-  function showNextComment() {
-    commentBox.style.opacity = 0;
-    setTimeout(() => {
-      commentBox.innerText = comments[commentIndex] || '';
-      commentBox.style.opacity = 1;
-      commentIndex = (commentIndex + 1) % comments.length;
-    }, 700);
-  }
-
-  showNextComment();
-  commentInterval = setInterval(showNextComment, 6000);
-}
-
-function prevSong() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    loadSong(currentIndex);
-  }
-}
-
-function nextSong() {
-  if (currentIndex < songs.length - 1) {
-    currentIndex++;
-    loadSong(currentIndex);
-  } else {
-    goToNextPlaylist();
-  }
-}
-
-function togglePlayPause() {
-  const iframe = document.getElementById('ytplayer');
-  const func = isPaused ? 'playVideo' : 'pauseVideo';
-  iframe.contentWindow.postMessage(`{"event":"command","func":"${func}","args":""}`, "*");
-  isPaused = !isPaused;
-  document.getElementById('playPauseBtn').innerText = isPaused ? 'Play' : 'Pause';
-}
-
-function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player('ytplayer', {
-    events: {
-      'onStateChange': onPlayerStateChange
-    }
+function populateFilter(id, values) {
+  const select = document.getElementById(id);
+  if (!select) return;
+  select.innerHTML = "";
+  values.forEach(val => {
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = val;
+    select.appendChild(opt);
   });
 }
 
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.ENDED) {
-    nextSong();
-  }
+function getSelectedValues(id) {
+  const select = document.getElementById(id);
+  return select ? Array.from(select.selectedOptions).map(opt => opt.value) : [];
 }
 
-function getCurrentPlaylistFilename() {
-  return urlParams.get("playlist");
+// Filtering
+function applyFilters() {
+  const selectedSeasons = getSelectedValues("seasonFilter");
+  const selectedSubmitters = getSelectedValues("submitterFilter");
+  const selectedRanks = getSelectedValues("rankFilter");
+
+  filteredSongs = masterSongs.filter(song => {
+    return (
+      (selectedSeasons.length === 0 || selectedSeasons.includes(song.season)) &&
+      (selectedSubmitters.length === 0 || selectedSubmitters.includes(song.submitter)) &&
+      (selectedRanks.length === 0 || selectedRanks.includes(song.rank?.toString()))
+    );
+  });
+
+  updateAvailableOptions();
+  renderTable(filteredSongs);
 }
 
-function goToNextPlaylist() {
-  const allPlaylists = [
-    "Fall2024_Top3.json",
-    "Spring2025_Top3.json"
-    // Add more as needed
-  ];
-  const current = getCurrentPlaylistFilename();
-  const currentIndex = allPlaylists.indexOf(current);
-  const next = allPlaylists[currentIndex + 1];
-
-  if (next) {
-    window.location.href = `player.html?playlist=${next}`;
-  } else {
-    alert("End of all playlists.");
-  }
+function updateAvailableOptions() {
+  populateFilter("submitterFilter", [...new Set(filteredSongs.map(s => s.submitter))]);
+  populateFilter("rankFilter", [...new Set(filteredSongs.map(s => s.rank))].sort((a, b) => a - b));
 }
+
+// Reset
+function resetFilters() {
+  document.querySelectorAll("select").forEach(select => select.selectedIndex = -1);
+  filteredSongs = [...masterSongs];
+  populateAllFilters(masterSongs);
+  renderTable(filteredSongs);
+}
+
+// Render
+function renderTable(data) {
+  const tbody = document.getElementById("songTableBody");
+  tbody.innerHTML = "";
+  data.forEach(song => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${song.season || ''}</td>
+      <td>${song.round_name || ''}</td>
+      <td>${song.song_title || ''}</td>
+      <td>${song.artist || ''}</td>
+      <td>${song.submitter || ''}</td>
+      <td>${song.score || ''}</td>
+      <td>${song.rank || ''}</td>
+    `;
+    tbody.appendChild(row);
+  });
+  document.getElementById("resultCount").textContent = data.length;
+}
+
+// Playlist
+function promptCreatePlaylist() {
+  const modal = document.getElementById("playlistModal");
+  const summary = [
+    { key: "Season", val: getSelectedValues("seasonFilter") },
+    { key: "Submitter", val: getSelectedValues("submitterFilter") },
+    { key: "Rank", val: getSelectedValues("rankFilter") }
+  ]
+    .filter(item => item.val.length > 0)
+    .map(item => `${item.key}: ${item.val.join(", ")}`)
+    .join(" | ");
+
+  document.getElementById("filterSummary").textContent = summary || "None (all songs)";
+  document.getElementById("playlistName").value = "";
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  const modal = document.getElementById("playlistModal");
+  if (modal) modal.style.display = "none";
+}
+
+function createPlaylist() {
+  const name = document.getElementById("playlistName").value.trim();
+  localStorage.setItem("filteredPlaylist", JSON.stringify(filteredSongs));
+  window.location.href = `player.html?fromFilter=1`;
+}
+
+// Wire up buttons
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("applyBtn")?.addEventListener("click", applyFilters);
+  document.getElementById("resetBtn")?.addEventListener("click", resetFilters);
+  document.getElementById("createBtn")?.addEventListener("click", promptCreatePlaylist);
+});
