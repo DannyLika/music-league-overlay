@@ -45,20 +45,6 @@ body {
   color: #1db954;
 }
 
-.archive-link {
-  margin-left: 20px;
-  color: #1db954;
-  font-weight: bold;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.archive-link:hover {
-  text-decoration: underline;
-}
-
 /* ===== Archive Controls ===== */
 .archive-controls {
   display: flex;
@@ -105,9 +91,9 @@ body {
 .archive-table {
   width: 100%;
   border-collapse: collapse;
-  color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
+  color: #fff;
 }
 
 .archive-table thead {
@@ -203,54 +189,42 @@ body {
 }
 
 /* ===== Player Page Enhancements ===== */
-.video-wrapper.large {
-  max-width: 900px;
-  margin: 20px auto;
-}
-
-.header-controls button.green-btn {
-  background-color: #1db954;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.header-controls button.green-btn:hover {
-  background-color: #1ed760;
-}
-
 .content {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.video-wrapper iframe {
+  width: 80vw;
+  height: 45vw;
+  max-width: 960px;
+  max-height: 540px;
+  border: none;
+  border-radius: 10px;
 }
 
 .info-comment-wrapper {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
   width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
+  max-width: 960px;
 }
 
-#songInfo {
-  flex: 1 1 50%;
-  max-width: 600px;
+.info {
+  flex: 1;
+  padding: 10px;
 }
 
-#commentBox {
-  flex: 1 1 40%;
-  max-height: 180px;
+.comment-box {
+  flex: 1;
+  max-height: 160px;
   overflow-y: auto;
-  padding-left: 20px;
-  border-left: 1px solid #333;
+  padding: 10px;
+  border-left: 2px solid #1db954;
 }
 
 /* ===== Responsive ===== */
@@ -281,10 +255,8 @@ body {
     flex-direction: column;
   }
 
-  #commentBox {
-    border-left: none;
-    border-top: 1px solid #333;
-    padding-left: 0;
-    padding-top: 10px;
+  .video-wrapper iframe {
+    width: 100vw;
+    height: 56.25vw;
   }
 }
