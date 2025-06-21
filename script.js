@@ -13,7 +13,8 @@ const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
-// Get URL Params
+// ✅ FIXED: Define URL Params FIRST
+const urlParams = new URLSearchParams(window.location.search);
 const base64Data = urlParams.get("data");
 const playlistFile = urlParams.get("playlist");
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
@@ -81,9 +82,13 @@ function fallbackToRickAstley(message = '') {
 
   songs = [fallbackSong];
   currentIndex = 0;
-  if (message) {
-    document.getElementById('songInfo').innerText = message;
+
+  // ✅ FIXED: Avoid error if songInfo doesn't exist
+  const songInfoEl = document.getElementById('songInfo');
+  if (songInfoEl && message) {
+    songInfoEl.innerText = message;
   }
+
   loadSong(currentIndex);
 }
 
@@ -174,7 +179,7 @@ function onPlayerStateChange(event) {
 }
 
 function getCurrentPlaylistFilename() {
-  return urlParams.get("playlist");
+  return playlistFile;
 }
 
 function goToNextPlaylist() {
