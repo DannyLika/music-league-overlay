@@ -46,11 +46,13 @@ body {
 }
 
 .archive-link {
-  text-decoration: none;
+  margin-left: 20px;
   color: #1db954;
   font-weight: bold;
-  margin-right: auto;
-  margin-left: 20px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .archive-link:hover {
@@ -103,13 +105,13 @@ body {
 .archive-table {
   width: 100%;
   border-collapse: collapse;
+  color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 14px;
-  color: #fff;
 }
 
 .archive-table thead {
-  background-color: #00cc44; /* site green */
+  background-color: #00cc44;
   color: white;
 }
 
@@ -200,6 +202,57 @@ body {
   color: #fff;
 }
 
+/* ===== Player Page Enhancements ===== */
+.video-wrapper.large {
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.header-controls button.green-btn {
+  background-color: #1db954;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.header-controls button.green-btn:hover {
+  background-color: #1ed760;
+}
+
+.content {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.info-comment-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+#songInfo {
+  flex: 1 1 50%;
+  max-width: 600px;
+}
+
+#commentBox {
+  flex: 1 1 40%;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-left: 20px;
+  border-left: 1px solid #333;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .archive-controls {
@@ -223,30 +276,15 @@ body {
   .brand-text {
     font-size: 1.2em;
   }
-}
 
-/* ===== Player Controls & Player Enhancements ===== */
-.green-btn {
-  background-color: #1db954;
-  color: #000;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 0.95em;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 8px;
-}
+  .info-comment-wrapper {
+    flex-direction: column;
+  }
 
-.green-btn:hover {
-  background-color: #1ed760;
-}
-
-.video-wrapper.large iframe {
-  width: 100%;
-  max-width: 900px;
-  height: 510px;
-  border: none;
-  display: block;
-  margin: 0 auto;
+  #commentBox {
+    border-left: none;
+    border-top: 1px solid #333;
+    padding-left: 0;
+    padding-top: 10px;
+  }
 }
