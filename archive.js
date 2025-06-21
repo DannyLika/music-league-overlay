@@ -15,10 +15,9 @@ fetch(masterJSON)
   })
   .catch(err => console.error("Error loading master_songs.json:", err));
 
-// Populate all dropdown filters with unique values
+// Populate dropdown filters with unique values (excluding Round)
 function populateAllFilters(data) {
   populateFilter("seasonFilter", [...new Set(data.map(s => s.season))]);
-  populateFilter("roundFilter", [...new Set(data.map(s => s.round_name))]);
   populateFilter("submitterFilter", [...new Set(data.map(s => s.submitter))]);
   populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
 }
@@ -40,17 +39,15 @@ function getSelectedValues(selectId) {
   return Array.from(select.selectedOptions).map(opt => opt.value);
 }
 
-// Filter songs using all selected filters
+// Filter songs using selected filters (excluding Round)
 function applyFilters() {
   const seasons = getSelectedValues("seasonFilter");
-  const rounds = getSelectedValues("roundFilter");
   const submitters = getSelectedValues("submitterFilter");
   const ranks = getSelectedValues("rankFilter");
 
   filteredSongs = masterSongs.filter(song => {
     return (
       (seasons.length === 0 || seasons.includes(song.season)) &&
-      (rounds.length === 0 || rounds.includes(song.round_name)) &&
       (submitters.length === 0 || submitters.includes(song.submitter)) &&
       (ranks.length === 0 || ranks.includes(song.rank))
     );
@@ -60,13 +57,13 @@ function applyFilters() {
   renderTable(filteredSongs);
 }
 
+// Dynamically adjust available values for each filter based on the current list
 function updateAvailableOptions() {
-  // Dynamically adjust available filter values based on current filtered results
-  populateFilter("roundFilter", [...new Set(filteredSongs.map(s => s.round_name))]);
   populateFilter("submitterFilter", [...new Set(filteredSongs.map(s => s.submitter))]);
   populateFilter("rankFilter", [...new Set(filteredSongs.map(s => s.rank))].sort((a, b) => a - b));
 }
 
+// Reset filters and display full table
 function resetFilters() {
   document.querySelectorAll("select").forEach(sel => sel.selectedIndex = -1);
   filteredSongs = [...masterSongs];
@@ -74,6 +71,7 @@ function resetFilters() {
   renderTable(filteredSongs);
 }
 
+// Render table with all columns including Round
 function renderTable(songs) {
   const tbody = document.getElementById("songTableBody");
   tbody.innerHTML = "";
@@ -97,7 +95,6 @@ function renderTable(songs) {
 function promptCreatePlaylist() {
   const filters = {
     Season: getSelectedValues("seasonFilter").join(", "),
-    Round: getSelectedValues("roundFilter").join(", "),
     Submitter: getSelectedValues("submitterFilter").join(", "),
     Rank: getSelectedValues("rankFilter").join(", ")
   };
@@ -122,7 +119,6 @@ function createPlaylist() {
 
   if (name) params.set("name", name);
   getSelectedValues("seasonFilter").forEach(v => params.append("season", v));
-  getSelectedValues("roundFilter").forEach(v => params.append("round", v));
   getSelectedValues("submitterFilter").forEach(v => params.append("submitter", v));
   getSelectedValues("rankFilter").forEach(v => params.append("rank", v));
 
