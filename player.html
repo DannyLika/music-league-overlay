@@ -4,40 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Music League Player</title>
-  <!-- Link to the external stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header section containing logo and link to homepage -->
+  <!-- Header with links -->
   <header class="site-header">
     <a href="index.html" class="logo-link">
       <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
       <span>🏠 Home</span>
     </a>
-
-    <!-- Controls embedded in the header to save space -->
+    <a href="archive.html" class="archive-link">📂 Archive</a>
     <div class="header-controls">
-      <button onclick="prevSong()">⏮️ Prev</button>
-      <button onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
-      <button onclick="nextSong()">⏭️ Next</button>
+      <button class="green-btn" onclick="prevSong()">⏮️ Prev</button>
+      <button class="green-btn" onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
+      <button class="green-btn" onclick="nextSong()">⏭️ Next</button>
     </div>
   </header>
 
-  <!-- Main content layout with video and info/comments -->
+  <!-- Main content layout -->
   <div class="content">
-    <!-- Video player wrapper -->
-    <div class="video-wrapper">
+    <div class="video-wrapper large">
       <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <!-- Song metadata and comments -->
     <div class="info-comment-wrapper">
       <div class="info" id="songInfo"></div>
       <div class="comment-box" id="commentBox"></div>
     </div>
   </div>
 
-  <!-- Link to main JavaScript logic -->
   <script src="script.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const playlist = params.get("playlist");
+    const nextPlaylist = params.get("next");
+
+    if (playlist) {
+      loadPlaylist(`playlists/${playlist}`, nextPlaylist);
+    } else {
+      document.getElementById('songInfo').innerText = 'No playlist selected.';
+    }
+  </script>
 </body>
 </html>
