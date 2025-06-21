@@ -197,7 +197,7 @@ body {
 
 .video-wrapper iframe {
   width: 80vw;  /* Previously 100vw; now 20% smaller */
-  height: 45vw;
+  height: 35vw;
   max-width: 960px;
   max-height: 540px;
   border: none;
@@ -274,6 +274,6 @@ button:hover {
 
   .video-wrapper iframe {
     width: 100vw;
-    height: 46.25vw;
+    height: 36.25vw;
   }
 }
