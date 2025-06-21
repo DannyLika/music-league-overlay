@@ -1,138 +1,50 @@
-// archive.js - Handles filtering, rendering, and playlist creation on archive.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music League Player</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header section with Home and Archive links -->
+  <header class="site-header">
+    <a href="index.html" class="logo-link">
+      <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
+      <span>🏠 Home</span>
+    </a>
+    <a href="archive.html" class="archive-link">📂 Archive</a>
 
-let masterSongs = [];
-let filteredSongs = [];
-const masterJSON = "master_songs.json";
+    <div class="header-controls">
+      <button class="green-btn" onclick="prevSong()">⏮️ Prev</button>
+      <button class="green-btn" onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
+      <button class="green-btn" onclick="nextSong()">⏭️ Next</button>
+    </div>
+  </header>
 
-// Fetch the master JSON and initialize the app
-fetch(masterJSON)
-  .then(res => res.json())
-  .then(data => {
-    masterSongs = data;
-    filteredSongs = [...masterSongs];
-    populateAllFilters(masterSongs);
-    renderTable(filteredSongs);
-  })
-  .catch(err => console.error("Error loading master_songs.json:", err));
+  <!-- Main content layout -->
+  <div class="content">
+    <div class="video-wrapper">
+      <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
 
-// Populate dropdown filters
-function populateAllFilters(data) {
-  populateFilter("seasonFilter", [...new Set(data.map(s => s.season))]);
-  populateFilter("submitterFilter", [...new Set(data.map(s => s.submitter))]);
-  populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
-}
+    <div class="info-comment-wrapper">
+      <div class="info" id="songInfo"></div>
+      <div class="comment-box" id="commentBox"></div>
+    </div>
+  </div>
 
-function populateFilter(id, items) {
-  const select = document.getElementById(id);
-  if (!select) return;
-  select.innerHTML = "";
-  items.forEach(item => {
-    const opt = document.createElement("option");
-    opt.value = item;
-    opt.textContent = item;
-    select.appendChild(opt);
-  });
-}
+  <script src="script.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const playlist = params.get("playlist");
+    const nextPlaylist = params.get("next");
 
-function getSelectedValues(selectId) {
-  const select = document.getElementById(selectId);
-  return select ? Array.from(select.selectedOptions).map(opt => opt.value) : [];
-}
-
-function applyFilters() {
-  const seasons = getSelectedValues("seasonFilter");
-  const submitters = getSelectedValues("submitterFilter");
-  const ranks = getSelectedValues("rankFilter");
-
-  filteredSongs = masterSongs.filter(song => {
-    return (
-      (seasons.length === 0 || seasons.includes(song.season)) &&
-      (submitters.length === 0 || submitters.includes(song.submitter)) &&
-      (ranks.length === 0 || ranks.includes(song.rank.toString()))
-    );
-  });
-
-  updateAvailableOptions();
-  renderTable(filteredSongs);
-}
-
-function updateAvailableOptions() {
-  populateFilter("submitterFilter", [...new Set(filteredSongs.map(s => s.submitter))]);
-  populateFilter("rankFilter", [...new Set(filteredSongs.map(s => s.rank))].sort((a, b) => a - b));
-}
-
-function resetFilters() {
-  document.querySelectorAll("select").forEach(sel => sel.selectedIndex = -1);
-  filteredSongs = [...masterSongs];
-  populateAllFilters(masterSongs);
-  renderTable(filteredSongs);
-}
-
-function renderTable(songs) {
-  const tbody = document.getElementById("songTableBody");
-  tbody.innerHTML = "";
-  songs.forEach(song => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${song.season}</td>
-      <td>${song.round_name}</td>
-      <td>${song.song_title}</td>
-      <td>${song.artist}</td>
-      <td>${song.submitter}</td>
-      <td>${song.score}</td>
-      <td>${song.rank}</td>
-    `;
-    tbody.appendChild(row);
-  });
-  document.getElementById("resultCount").textContent = songs.length;
-}
-
-function promptCreatePlaylist() {
-  const modal = document.getElementById("playlistModal");
-  if (!modal) {
-    console.error("playlistModal not found in DOM.");
-    return;
-  }
-
-  const filters = {
-    Season: getSelectedValues("seasonFilter").join(", "),
-    Submitter: getSelectedValues("submitterFilter").join(", "),
-    Rank: getSelectedValues("rankFilter").join(", ")
-  };
-
-  const summary = Object.entries(filters)
-    .filter(([_, val]) => val)
-    .map(([key, val]) => `${key}: ${val}`)
-    .join(" | ");
-
-  document.getElementById("filterSummary").textContent = summary || "None (all songs)";
-  document.getElementById("playlistName").value = "";
-  modal.style.display = "flex";
-}
-
-function closeModal() {
-  const modal = document.getElementById("playlistModal");
-  if (modal) modal.style.display = "none";
-}
-
-function createPlaylist() {
-  const name = document.getElementById("playlistName").value.trim();
-  const params = new URLSearchParams();
-
-  if (name) params.set("name", name);
-  getSelectedValues("seasonFilter").forEach(v => params.append("season", v));
-  getSelectedValues("submitterFilter").forEach(v => params.append("submitter", v));
-  getSelectedValues("rankFilter").forEach(v => params.append("rank", v));
-
-  window.location.href = `player.html?${params.toString()}`;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const applyBtn = document.getElementById("applyBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const createBtn = document.getElementById("createBtn");
-
-  if (applyBtn) applyBtn.onclick = applyFilters;
-  if (resetBtn) resetBtn.onclick = resetFilters;
-  if (createBtn) createBtn.onclick = promptCreatePlaylist;
-});
+    if (playlist) {
+      loadPlaylist(`playlists/${playlist}`, nextPlaylist);
+    } else {
+      document.getElementById('songInfo').innerText = 'No playlist selected.';
+    }
+  </script>
+</body>
+</html>
