@@ -14,12 +14,24 @@ tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
 // Get URL Params
-const urlParams = new URLSearchParams(window.location.search);
+const base64Data = urlParams.get("data");
 const playlistFile = urlParams.get("playlist");
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 const nextPlaylist = urlParams.get("next");
 
-if (filePath) {
+if (base64Data) {
+  try {
+    const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+    const data = JSON.parse(jsonStr);
+    songs = data.filter(song => song && song.song_title);
+    if (songs.length === 0) throw new Error("Filtered song list is empty.");
+    currentIndex = 0;
+    loadSong(currentIndex);
+  } catch (err) {
+    console.error("Error decoding base64 song data:", err);
+    fallbackToRickAstley("Invalid song data.");
+  }
+} else if (filePath) {
   loadPlaylist(filePath, nextPlaylist);
 } else {
   fallbackToRickAstley("No playlist selected.");
