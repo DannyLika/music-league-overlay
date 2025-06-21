@@ -232,13 +232,13 @@ body {
 
 /* Song info on the left */
 .song-info {
-  flex: 0 0 40%;
+  flex: 0 0 30%;
   padding: 20px;
 }
 
 /* Video on the right */
 .video-wrapper {
-  flex: 0 0 60%;
+  flex: 0 0 70%;
   display: flex;
   justify-content: center;
   align-items: center;
