@@ -118,12 +118,12 @@ function closeModal() {
 function createPlaylist() {
   const name = document.getElementById("playlistName").value.trim();
 
-  // Base64 encode filteredSongs
-  const encodedSongs = btoa(unescape(encodeURIComponent(JSON.stringify(filteredSongs))));
+  // Store filteredSongs directly in localStorage
+  localStorage.setItem("filteredPlaylist", JSON.stringify(filteredSongs));
 
   const params = new URLSearchParams();
   if (name) params.set("name", name);
-  params.set("data", encodedSongs);
+  params.set("fromFilter", "1");
 
   window.location.href = `player.html?${params.toString()}`;
 }
