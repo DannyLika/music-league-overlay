@@ -1,19 +1,23 @@
 // archive.js - Handles filtering, rendering, and playlist creation on archive.html
 
-let masterSongs = [];
-let filteredSongs = [];
-const masterJSON = "master_songs.json";
+document.addEventListener("DOMContentLoaded", () => {
+  let masterSongs = [];
+  let filteredSongs = [];
+  const masterJSON = "master_songs.json";
 
-// Fetch the master JSON and initialize the app
-fetch(masterJSON)
-  .then(res => res.json())
-  .then(data => {
-    masterSongs = data;
-    filteredSongs = [...masterSongs];
-    populateAllFilters(masterSongs);
-    renderTable(filteredSongs);
-  })
-  .catch(err => console.error("Error loading master_songs.json:", err));
+  // Fetch the master JSON and initialize the app
+  fetch(masterJSON)
+    .then(res => res.json())
+    .then(data => {
+      masterSongs = data;
+      filteredSongs = [...masterSongs];
+      populateAllFilters(masterSongs);
+      renderTable(filteredSongs);
+    })
+    .catch(err => console.error("Error loading master_songs.json:", err));
+
+  // ... rest of your functions like populateAllFilters, renderTable, etc.
+});
 
 // Populate dropdown filters with unique values (excluding Round)
 function populateAllFilters(data) {
