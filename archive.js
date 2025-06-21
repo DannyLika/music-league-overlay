@@ -127,11 +127,12 @@ function createPlaylist() {
   window.location.href = `player.html?${params.toString()}`;
 }
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("applyBtn").onclick = applyFilters;
-    document.getElementById("resetBtn").onclick = resetFilters;
-    document.getElementById("createBtn").onclick = promptCreatePlaylist;
-  });
-</script>
+document.addEventListener("DOMContentLoaded", () => {
+  const applyBtn = document.getElementById("applyBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const createBtn = document.getElementById("createBtn");
 
+  if (applyBtn) applyBtn.onclick = applyFilters;
+  if (resetBtn) resetBtn.onclick = resetFilters;
+  if (createBtn) createBtn.onclick = promptCreatePlaylist;
+});
