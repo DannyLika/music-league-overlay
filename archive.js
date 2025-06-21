@@ -126,3 +126,12 @@ function createPlaylist() {
 
   window.location.href = `player.html?${params.toString()}`;
 }
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("applyBtn").onclick = applyFilters;
+    document.getElementById("resetBtn").onclick = resetFilters;
+    document.getElementById("createBtn").onclick = promptCreatePlaylist;
+  });
+</script>
+
