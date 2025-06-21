@@ -43,13 +43,13 @@ function getSelectedValues(selectId) {
 function applyFilters() {
   const seasons = getSelectedValues("seasonFilter");
   const submitters = getSelectedValues("submitterFilter");
-  const ranks = getSelectedValues("rankFilter");
+  const ranks = getSelectedValues("rankFilter").map(r => parseInt(r, 10));
 
   filteredSongs = masterSongs.filter(song => {
     return (
       (seasons.length === 0 || seasons.includes(song.season)) &&
       (submitters.length === 0 || submitters.includes(song.submitter)) &&
-      (ranks.length === 0 || ranks.includes(song.rank))
+      (ranks.length === 0 || ranks.includes(parseInt(song.rank, 10)))
     );
   });
 
