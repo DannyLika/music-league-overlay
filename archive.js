@@ -18,7 +18,7 @@ fetch(masterJSON)
 // Populate all dropdown filters with unique values
 function populateAllFilters(data) {
   populateFilter("seasonFilter", [...new Set(data.map(s => s.season))]);
- // populateFilter("roundFilter", [...new Set(data.map(s => s.round_name))]);
+  populateFilter("roundFilter", [...new Set(data.map(s => s.round_name))]);
   populateFilter("submitterFilter", [...new Set(data.map(s => s.submitter))]);
   populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
 }
