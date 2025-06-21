@@ -196,8 +196,8 @@ body {
 }
 
 .video-wrapper iframe {
-  width: 70vw;  /* Previously 100vw; now 20% smaller */
-  height: 30vw;
+  width: 65vw;  /* Previously 100vw; now 20% smaller */
+  height: 28vw;
   max-width: 960px;
   max-height: 540px;
   border: none;
