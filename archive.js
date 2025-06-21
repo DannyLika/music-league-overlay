@@ -87,7 +87,8 @@ function fallbackToRickAstley(message = '') {
   songs = [fallbackSong];
   currentIndex = 0;
   if (message) {
-    document.getElementById('songInfo').innerText = message;
+    const songInfoEl = document.getElementById('songInfo');
+      if (songInfoEl) songInfoEl.innerText = message;
   }
   loadSong(currentIndex);
 }
