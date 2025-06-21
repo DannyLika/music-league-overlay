@@ -117,12 +117,13 @@ function closeModal() {
 
 function createPlaylist() {
   const name = document.getElementById("playlistName").value.trim();
-  const params = new URLSearchParams();
 
+  // Base64 encode filteredSongs
+  const encodedSongs = btoa(unescape(encodeURIComponent(JSON.stringify(filteredSongs))));
+
+  const params = new URLSearchParams();
   if (name) params.set("name", name);
-  getSelectedValues("seasonFilter").forEach(v => params.append("season", v));
-  getSelectedValues("submitterFilter").forEach(v => params.append("submitter", v));
-  getSelectedValues("rankFilter").forEach(v => params.append("rank", v));
+  params.set("data", encodedSongs);
 
   window.location.href = `player.html?${params.toString()}`;
 }
