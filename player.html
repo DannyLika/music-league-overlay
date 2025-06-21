@@ -8,18 +8,22 @@
 </head>
 <body>
   <!-- Header with links -->
-  <header class="site-header">
+<header class="site-header">
+  <div class="nav-links">
     <a href="index.html" class="logo-link">
       <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
       <span>🏠 Home</span>
     </a>
-    <a href="archive.html" class="archive-link">📂 Archive</a>
-    <div class="header-controls">
-      <button class="green-btn" onclick="prevSong()">⏮️ Prev</button>
-      <button class="green-btn" onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
-      <button class="green-btn" onclick="nextSong()">⏭️ Next</button>
-    </div>
-  </header>
+    <a href="archive.html" class="archive-link">📁 Archive</a>
+  </div>
+
+  <div class="header-controls">
+    <button onclick="prevSong()">⏮️ Prev</button>
+    <button onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
+    <button onclick="nextSong()">⏭️ Next</button>
+  </div>
+</header>
+
 
   <!-- Main content layout -->
   <div class="content">
