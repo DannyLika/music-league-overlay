@@ -106,11 +106,11 @@ function promptCreatePlaylist() {
 
   document.getElementById("filterSummary").textContent = summary || "None (all songs)";
   document.getElementById("playlistName").value = "";
-  document.getElementById("playlistModal").style.display = "flex";
+  document.getElementById("modalOverlay").style.display = "flex";
 }
 
 function closeModal() {
-  document.getElementById("playlistModal").style.display = "none";
+  document.getElementById("modalOverlay").style.display = "none";
 }
 
 function createPlaylist() {
