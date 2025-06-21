@@ -39,18 +39,5 @@
 
   <!-- Link to main JavaScript logic -->
   <script src="script.js"></script>
-  <script>
-    // Get URL parameters for playlist name and optionally the next playlist
-    const params = new URLSearchParams(window.location.search);
-    const playlist = params.get("playlist");
-    const nextPlaylist = params.get("next");
-
-    // Load the selected playlist file
-    if (playlist) {
-      loadPlaylist(`playlists/${playlist}`, nextPlaylist);
-    } else {
-      document.getElementById('songInfo').innerText = 'No playlist selected.';
-    }
-  </script>
 </body>
 </html>
