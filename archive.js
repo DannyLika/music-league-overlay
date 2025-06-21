@@ -114,9 +114,21 @@ function closeModal() {
 
 function createPlaylist() {
   const name = document.getElementById("playlistName").value.trim();
-  localStorage.setItem("filteredPlaylist", JSON.stringify(filteredSongs));
-  window.location.href = `player.html?fromFilter=1`;
+
+  // Save filtered songs to localStorage
+  try {
+    localStorage.setItem("filteredPlaylist", JSON.stringify(filteredSongs));
+  } catch (e) {
+    console.error("Could not save playlist to localStorage", e);
+  }
+
+  const params = new URLSearchParams();
+  if (name) params.set("name", name);
+  params.set("fromFilter", "1");
+
+  window.location.href = `player.html?${params.toString()}`;
 }
+
 
 // Wire up buttons
 document.addEventListener("DOMContentLoaded", () => {
