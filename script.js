@@ -6,63 +6,76 @@ let commentInterval;
 let ytPlayer;
 
 const fallbackVideoId = "dQw4w9WgXcQ";
-console.log("script.js loaded!");
+console.log("✅ script.js loaded");
 
 // Load YouTube IFrame API
 const tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
-// ✅ FIXED: Define URL Params FIRST
+// URL Params
 const urlParams = new URLSearchParams(window.location.search);
 const base64Data = urlParams.get("data");
 const playlistFile = urlParams.get("playlist");
-const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 const nextPlaylist = urlParams.get("next");
+const fromFilter = urlParams.get("fromFilter") === "1";
+const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 
-if (base64Data) {
+// Load source
+if (fromFilter && localStorage.getItem("filteredPlaylist")) {
+  console.log("🎯 Loading from localStorage (filteredPlaylist)");
+  try {
+    const raw = localStorage.getItem("filteredPlaylist");
+    const parsed = JSON.parse(raw);
+    console.log("📦 Loaded filteredPlaylist with", parsed.length, "songs");
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      songs = parsed;
+      currentIndex = 0;
+      loadSong(currentIndex);
+    } else {
+      throw new Error("Invalid playlist data");
+    }
+  } catch (e) {
+    console.error("❌ Failed to parse filtered playlist:", e);
+    fallbackToRickAstley("Invalid playlist data.");
+  }
+} else if (base64Data) {
+  console.log("🎯 Loading from base64 encoded data");
   try {
     const jsonStr = decodeURIComponent(escape(atob(base64Data)));
     const data = JSON.parse(jsonStr);
+    console.log("📦 Decoded base64 with", data.length, "songs");
     songs = data.filter(song => song && song.song_title);
     if (songs.length === 0) throw new Error("Filtered song list is empty.");
     currentIndex = 0;
     loadSong(currentIndex);
   } catch (err) {
-    console.error("Error decoding base64 song data:", err);
+    console.error("❌ Error decoding base64 song data:", err);
     fallbackToRickAstley("Invalid song data.");
   }
 } else if (filePath) {
-  loadPlaylist(filePath, nextPlaylist);
+  console.log("🎯 Loading from static playlist file:", filePath);
+  loadPlaylist(filePath);
 } else {
+  console.warn("⚠️ No playlist data found. Falling back.");
   fallbackToRickAstley("No playlist selected.");
 }
 
-function loadPlaylist(path, nextPlaylist = null) {
+function loadPlaylist(path) {
   fetch(path)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       return res.json();
     })
     .then(data => {
-      if (!Array.isArray(data) || data.length === 0) {
-        console.warn("Playlist is empty. Falling back to Rick Astley.");
-        fallbackToRickAstley();
-        return;
-      }
-
+      console.log("📦 Loaded JSON playlist with", data.length, "songs");
       songs = data.filter(song => song && song.song_title);
-      if (songs.length === 0) {
-        console.warn("No valid songs found. Fallback triggered.");
-        fallbackToRickAstley();
-        return;
-      }
-
+      if (songs.length === 0) throw new Error("No valid songs");
       currentIndex = 0;
       loadSong(currentIndex);
     })
     .catch(err => {
-      console.error("JSON load error:", err);
+      console.error("❌ Error loading JSON playlist:", err);
       fallbackToRickAstley("Unable to load song data.");
     });
 }
@@ -73,6 +86,7 @@ function fallbackToRickAstley(message = '') {
     artist: "Rick Astley",
     submitter: "Fallback Bot",
     score: "∞",
+    rank: "1",
     comments: "You tried to break it, but Rick rolled you instead.",
     round_name: "Classic Internet Moments",
     season: "Bonus",
@@ -83,11 +97,8 @@ function fallbackToRickAstley(message = '') {
   songs = [fallbackSong];
   currentIndex = 0;
 
-  // ✅ FIXED: Avoid error if songInfo doesn't exist
   const songInfoEl = document.getElementById('songInfo');
-  if (songInfoEl && message) {
-    songInfoEl.innerText = message;
-  }
+  if (songInfoEl && message) songInfoEl.innerText = message;
 
   loadSong(currentIndex);
 }
@@ -101,18 +112,17 @@ function extractYouTubeID(url) {
 function loadSong(index) {
   clearInterval(commentInterval);
   const song = songs[index];
+  if (!song) return console.warn("🚫 No song to load at index", index);
 
   const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
   const spotifyUrl = song.spotify_url;
   const iframe = document.getElementById('ytplayer');
 
-  if (videoId) {
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-  } else if (spotifyUrl) {
-    iframe.src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
-  } else {
-    iframe.src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
-  }
+  iframe.src = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`
+    : spotifyUrl
+      ? `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`
+      : `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
 
   document.getElementById('songInfo').innerHTML = `
     <h2>${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}</h2>
