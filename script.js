@@ -132,6 +132,7 @@ function loadSong(index) {
 
   const info = document.getElementById('songInfo');
   if (info) {
+    info.innerText = ''; // ✅ Clear previous fallback message
     info.innerHTML = `
       <h2>${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}</h2>
       <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
@@ -146,20 +147,22 @@ function loadSong(index) {
   if (commentBox) {
     const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
     commentIndex = 0;
+    commentBox.innerText = ''; // ✅ Clear any prior text
 
     function showNextComment() {
       commentBox.style.opacity = 0;
       setTimeout(() => {
-        commentBox.textContent = comments[commentIndex] || '';
+        commentBox.innerText = comments[commentIndex] || '';
         commentBox.style.opacity = 1;
         commentIndex = (commentIndex + 1) % comments.length;
-      }, 500);
+      }, 300); // fade delay
     }
 
     showNextComment();
     commentInterval = setInterval(showNextComment, 6000);
   }
 }
+
 
 function prevSong() {
   if (currentIndex > 0) {
