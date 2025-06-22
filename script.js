@@ -20,6 +20,7 @@ const playlistFile = urlParams.get("playlist");
 const fromFilter = urlParams.get("fromFilter") === "1";
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 
+// Load source
 if (fromFilter && localStorage.getItem("filteredPlaylist")) {
   console.log("🎯 Loading from localStorage (filteredPlaylist)");
   try {
@@ -96,7 +97,9 @@ function fallbackToRickAstley(message = '') {
   currentIndex = 0;
 
   const songInfoEl = document.getElementById('songInfo');
-  if (songInfoEl && message) songInfoEl.innerText = message;
+  if (songInfoEl && message) {
+    songInfoEl.innerHTML = `<p>${message}</p>`;
+  }
 
   loadSong(currentIndex);
 }
@@ -121,13 +124,11 @@ function loadSong(index) {
     return;
   }
 
-  if (videoId) {
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-  } else if (spotifyUrl) {
-    iframe.src = `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`;
-  } else {
-    iframe.src = `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
-  }
+  iframe.src = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`
+    : spotifyUrl
+      ? `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`
+      : `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
 
   const info = document.getElementById('songInfo');
   if (info) {
@@ -142,20 +143,22 @@ function loadSong(index) {
   }
 
   const commentBox = document.getElementById("commentBox");
-  const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
-  commentIndex = 0;
+  if (commentBox) {
+    const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
+    commentIndex = 0;
 
-  function showNextComment() {
-    commentBox.style.opacity = 0;
-    setTimeout(() => {
-      commentBox.innerText = comments[commentIndex] || '';
-      commentBox.style.opacity = 1;
-      commentIndex = (commentIndex + 1) % comments.length;
-    }, 700);
+    function showNextComment() {
+      commentBox.style.opacity = 0;
+      setTimeout(() => {
+        commentBox.textContent = comments[commentIndex] || '';
+        commentBox.style.opacity = 1;
+        commentIndex = (commentIndex + 1) % comments.length;
+      }, 500);
+    }
+
+    showNextComment();
+    commentInterval = setInterval(showNextComment, 6000);
   }
-
-  showNextComment();
-  commentInterval = setInterval(showNextComment, 6000);
 }
 
 function prevSong() {
