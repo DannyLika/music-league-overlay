@@ -132,7 +132,15 @@ function loadSong(index) {
   document.getElementById('rank').textContent = song.rank || 0;
 
   const commentBox = document.getElementById("commentBox");
-  const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
+  let comments = ['No comments available'];
+if (song.comments) {
+  if (song.comments.includes('|')) {
+    comments = song.comments.split('|').map(c => c.trim()).filter(Boolean);
+  } else {
+    comments = song.comments.split('\n').map(c => c.trim()).filter(Boolean);
+  }
+}
+
   commentIndex = 0;
 
   function showNextComment() {
