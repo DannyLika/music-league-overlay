@@ -22,14 +22,20 @@ function populateAllFilters(data) {
   populateFilter("rankFilter", [...new Set(data.map(s => s.rank))].sort((a, b) => a - b));
 }
 
-function populateFilter(id, values) {
+function populateFilter(id, items) {
   const select = document.getElementById(id);
   if (!select) return;
   select.innerHTML = "";
-  values.forEach(val => {
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = `All ${id.replace("Filter", "")}`;
+  select.appendChild(defaultOption);
+
+  items.forEach(item => {
     const opt = document.createElement("option");
-    opt.value = val;
-    opt.textContent = val;
+    opt.value = item;
+    opt.textContent = item;
     select.appendChild(opt);
   });
 }
