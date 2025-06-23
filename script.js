@@ -8,14 +8,13 @@ let commentInterval;
 let ytPlayer;
 
 const fallbackVideoId = "dQw4w9WgXcQ";
-console.log("✅ script.js loaded");
 
 // Load YouTube IFrame API
-const tag = document.createElement('script');
+const tag = document.createElement("script");
 tag.src = "https://www.youtube.com/iframe_api";
 document.body.appendChild(tag);
 
-// Wait for DOM to be ready
+// DOM Ready
 window.addEventListener("DOMContentLoaded", () => {
   console.log("🌸 DOM ready");
 
@@ -82,7 +81,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function fallbackToRickAstley(message = '') {
+function fallbackToRickAstley(message = "") {
   const fallbackSong = {
     song_title: "Never Gonna Give You Up",
     artist: "Rick Astley",
@@ -98,15 +97,15 @@ function fallbackToRickAstley(message = '') {
 
   songs = [fallbackSong];
   currentIndex = 0;
-  const songInfoEl = document.getElementById('songInfo');
+  const songInfoEl = document.getElementById("songInfo");
   if (songInfoEl && message) songInfoEl.innerText = message;
   loadSong(currentIndex);
 }
 
 function extractYouTubeID(url) {
-  if (!url) return '';
+  if (!url) return "";
   const match = url.match(/(?:[?&]v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : '';
+  return match ? match[1] : "";
 }
 
 function loadSong(index) {
@@ -116,37 +115,38 @@ function loadSong(index) {
 
   const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
   const spotifyUrl = song.spotify_url;
-  const iframe = document.getElementById('ytplayer');
+  const iframe = document.getElementById("ytplayer");
 
   iframe.src = videoId
     ? `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`
     : spotifyUrl
-      ? `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`
+      ? `https://open.spotify.com/embed/track/${spotifyUrl.split("/track/")[1]}`
       : `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
 
-  document.getElementById('categoryTitle').textContent = `${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}`;
-  document.getElementById('artistName').textContent = song.artist || 'Unknown Artist';
-  document.getElementById('songTitle').textContent = song.song_title || 'Unknown Title';
-  document.getElementById('submitter').textContent = song.submitter || 'Unknown';
-  document.getElementById('score').textContent = song.score || 0;
-  document.getElementById('rank').textContent = song.rank || 0;
+  document.getElementById("categoryTitle").textContent =
+    `${song.season || "Unknown Season"} - ${song.round_name || "Unknown Round"}`;
+  document.getElementById("artistName").textContent = song.artist || "Unknown Artist";
+  document.getElementById("songTitle").textContent = song.song_title || "Unknown Title";
+  document.getElementById("submitter").textContent = song.submitter || "Unknown";
+  document.getElementById("score").textContent = song.score || 0;
+  document.getElementById("rank").textContent = song.rank || 0;
 
   const commentBox = document.getElementById("commentBox");
-  let comments = ['No comments available'];
-if (song.comments) {
-  if (song.comments.includes('|')) {
-    comments = song.comments.split('|').map(c => c.trim()).filter(Boolean);
-  } else {
-    comments = song.comments.split('\n').map(c => c.trim()).filter(Boolean);
+  let comments = ["No comments available"];
+  if (song.comments) {
+    if (song.comments.includes("|")) {
+      comments = song.comments.split("|").map(c => c.trim()).filter(Boolean);
+    } else {
+      comments = song.comments.split("\n").map(c => c.trim()).filter(Boolean);
+    }
   }
-}
 
   commentIndex = 0;
 
   function showNextComment() {
     commentBox.style.opacity = 0;
     setTimeout(() => {
-      commentBox.innerText = comments[commentIndex] || '';
+      commentBox.innerText = comments[commentIndex] || "";
       commentBox.style.opacity = 1;
       commentIndex = (commentIndex + 1) % comments.length;
     }, 700);
@@ -154,6 +154,7 @@ if (song.comments) {
 
   showNextComment();
   commentInterval = setInterval(showNextComment, 6000);
+
   console.log(`🎬 Now playing: ${song.song_title} by ${song.artist} [${index + 1}/${songs.length}]`);
 }
 
@@ -174,23 +175,44 @@ function nextSong() {
 }
 
 function togglePlayPause() {
-  const iframe = document.getElementById('ytplayer');
-  const func = isPaused ? 'playVideo' : 'pauseVideo';
+  const iframe = document.getElementById("ytplayer");
+  const func = isPaused ? "playVideo" : "pauseVideo";
   iframe.contentWindow.postMessage(`{"event":"command","func":"${func}","args":""}`, "*");
   isPaused = !isPaused;
-  document.getElementById('playPauseBtn').innerText = isPaused ? '▶️ Play' : '⏯️ Pause';
+  document.getElementById("playPauseBtn").innerText = isPaused ? "▶️ Play" : "⏯️ Pause";
 }
 
+// YouTube API Ready
 function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player('ytplayer', {
+  console.log("🎥 YouTube IFrame API Ready");
+  ytPlayer = new YT.Player("ytplayer", {
     events: {
-      'onStateChange': onPlayerStateChange
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange
     }
   });
 }
 
+function onPlayerReady(event) {
+  console.log("✅ YouTube Player Ready");
+  if (!isPaused) {
+    event.target.playVideo();
+    console.log("▶️ Autoplay attempted");
+  }
+}
+
 function onPlayerStateChange(event) {
+  const stateMap = {
+    "-1": "UNSTARTED",
+    0: "ENDED",
+    1: "PLAYING",
+    2: "PAUSED",
+    3: "BUFFERING",
+    5: "CUED"
+  };
+  console.log("🎬 Player State:", stateMap[event.data]);
   if (event.data === YT.PlayerState.ENDED) {
+    console.log("⏭️ Song ended – moving to next");
     nextSong();
   }
 }
