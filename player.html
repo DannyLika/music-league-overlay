@@ -7,48 +7,41 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header with links -->
-<header class="site-header">
-  <div class="nav-links">
-    <a href="index.html" class="logo-link">
-      <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
-      <span>🏠 Home</span>
-    </a>
-    <a href="archive.html" class="archive-link">📁 Archive</a>
-  </div>
+  <header class="site-header">
+    <div class="nav-links">
+      <a href="index.html" class="logo-link">
+        <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
+        <span>🏠 Home</span>
+      </a>
+      <a href="archive.html" class="archive-link">📁 Archive</a>
+    </div>
+    <div class="header-controls">
+      <button onclick="prevSong()">⏮️ Prev</button>
+      <button onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
+      <button onclick="nextSong()">⏭️ Next</button>
+    </div>
+  </header>
 
-  <div class="header-controls">
-    <button onclick="prevSong()">⏮️ Prev</button>
-    <button onclick="togglePlayPause()" id="playPauseBtn">⏯️ Pause</button>
-    <button onclick="nextSong()">⏭️ Next</button>
-  </div>
-</header>
-
-  <!-- Main content layout -->
-<div class="content">
-  <div class="top-section">
-    <div class="song-info" id="songInfo">
-  <h2 id="categoryTitle"></h2>
-  <p><strong>Artist:</strong> <span id="artistName"></span></p>
-  <p><strong>Song:</strong> <span id="songTitle"></span></p>
-  <p><strong>Submitter:</strong> <span id="submitter"></span></p>
-  <p><strong>Score:</strong> <span id="score"></span></p>
-  <p><strong>Rank:</strong> <span id="rank"></span></p>
-</div>
-    <div class="video-wrapper">
-      <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <div class="content">
+    <div class="top-section">
+      <div class="song-info" id="songInfo">
+        <h2 id="categoryTitle">Loading...</h2>
+        <p><strong>Artist:</strong> <span id="artistName"></span></p>
+        <p><strong>Song:</strong> <span id="songTitle"></span></p>
+        <p><strong>Submitter:</strong> <span id="submitter"></span></p>
+        <p><strong>Score:</strong> <span id="score"></span></p>
+        <p><strong>Rank:</strong> <span id="rank"></span></p>
+      </div>
+      <div class="video-wrapper">
+        <iframe id="ytplayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="bottom-section">
+      <div class="comment-box" id="commentBox"></div>
     </div>
   </div>
-  <div class="bottom-section">
-    <div class="comment-box" id="commentBox"></div>
-  </div>
-</div>
 
+  <!-- Load script.js and it will handle everything -->
   <script src="script.js"></script>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const playlist = params.get("playlist");
-    const nextPlaylist = params.get("next");
-  </script>
 </body>
 </html>
