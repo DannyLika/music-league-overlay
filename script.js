@@ -1,172 +1,188 @@
 console.log("✅ script.js loaded");
 
-let player;
+let songs = [];
 let currentIndex = 0;
-let playlist = [];
-let fromFilter = false;
-let playlistFile = null;
-let base64Data = null;
+let isPaused = false;
+let commentIndex = 0;
+let commentInterval;
+let ytPlayer;
 
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('fromFilter')) {
-    fromFilter = true;
-}
-if (urlParams.has('playlist')) {
-    playlistFile = urlParams.get('playlist');
-}
-if (urlParams.has('base64')) {
-    base64Data = urlParams.get('base64');
-}
+const fallbackVideoId = "dQw4w9WgXcQ";
+console.log("✅ script.js loaded");
 
-console.log("🔍 URL Params:", { base64Data, playlistFile, fromFilter });
+// Load YouTube IFrame API
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.body.appendChild(tag);
 
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("🌸 DOM ready");
+// Wait for DOM to be ready
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("🌸 DOM ready");
 
-    if (base64Data) {
-        try {
-            playlist = JSON.parse(atob(base64Data));
-            console.log(`📦 Loaded base64 playlist with ${playlist.length} songs`);
-            initializePlayer();
-        } catch (error) {
-            console.error("❌ Failed to parse base64 playlist:", error);
-        }
-    } else if (fromFilter) {
-        const data = localStorage.getItem('filteredPlaylist');
-        if (data) {
-            try {
-                playlist = JSON.parse(data);
-                console.log(`📦 Loaded filteredPlaylist with ${playlist.length} songs`);
-                initializePlayer();
-            } catch (error) {
-                console.error("❌ Failed to parse filteredPlaylist:", error);
-            }
-        } else {
-            console.warn("⚠️ No filteredPlaylist found in localStorage");
-        }
-    } else if (playlistFile) {
-        console.log(`🎯 Loading from static playlist file: playlists/${playlistFile}`);
-        fetch(`playlists/${playlistFile}`)
-            .then(response => response.json())
-            .then(data => {
-                playlist = data;
-                console.log(`📦 Loaded playlist file with ${playlist.length} songs`);
-                initializePlayer();
-            })
-            .catch(error => {
-                console.error("❌ Failed to load playlist file:", error);
-            });
-    } else {
-        console.warn("⚠️ No playlist selected.");
-    }
-});
+  const urlParams = new URLSearchParams(window.location.search);
+  const base64Data = urlParams.get("data");
+  const playlistFile = urlParams.get("playlist");
+  const fromFilter = urlParams.get("fromFilter") === "1";
 
-// YouTube IFrame API ready
-function onYouTubeIframeAPIReady() {
-    console.log("🎥 YouTube IFrame API ready");
-    player = new YT.Player('player', {
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
-}
+  console.log("🔍 URL Params:", {
+    base64Data,
+    playlistFile,
+    fromFilter
+  });
 
-function onPlayerReady() {
-    if (playlist.length > 0) {
-        loadSong(currentIndex);
-    }
-}
-
-function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
-        nextSong();
-    }
-}
-
-function loadSong(index) {
-    if (!playlist || playlist.length === 0 || index >= playlist.length) return;
-
-    const song = playlist[index];
-    currentIndex = index;
-
-    // Load the video
-    player.loadVideoById(song.videoId);
-    console.log(`🎬 Now playing: ${song.song} by ${song.artist} [${index + 1}/${playlist.length}]`);
-
-    // Update metadata
-    document.getElementById("roundTitle").innerText = song.round || '';
-    document.getElementById("artist").innerText = song.artist || '';
-    document.getElementById("song").innerText = song.song || '';
-    document.getElementById("submitter").innerText = song.submitter || '';
-    document.getElementById("score").innerText = song.score ?? '';
-    document.getElementById("rank").innerText = song.rank ?? '';
-
-    // Display only the current song's comments
-    const commentsContainer = document.getElementById("comments");
-    commentsContainer.innerHTML = '';
-    if (song.comments && Array.isArray(song.comments)) {
-        song.comments.forEach(comment => {
-            const div = document.createElement('div');
-            div.className = "comment";
-            div.textContent = `${comment.name}: ${comment.text}`;
-            commentsContainer.appendChild(div);
-        });
-    }
-}
-
-function nextSong() {
-    if (currentIndex < playlist.length - 1) {
-        loadSong(currentIndex + 1);
-    }
-}
-
-function prevSong() {
-    if (currentIndex > 0) {
-        loadSong(currentIndex - 1);
-    }
-}
-
-function pauseSong() {
-    if (player && player.pauseVideo) {
-        player.pauseVideo();
-    }
-}
-
-// Assign button functions
-window.nextSong = nextSong;
-window.prevSong = prevSong;
-window.pauseSong = pauseSong;
-window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("📦 DOM ready");
-
-  const playlistFile = playlist ?? null;
-  const fromFilter = window.location.search.includes("fromFilter=1");
-
-  if (fromFilter) {
+  if (fromFilter && localStorage.getItem("filteredPlaylist")) {
     console.log("🎯 Loading from localStorage (filteredPlaylist)");
-    const base64 = localStorage.getItem("filteredPlaylist");
-    if (base64) {
-      try {
-        const json = JSON.parse(atob(base64));
-        currentPlaylist = json;
-        console.log(`📦 Loaded filteredPlaylist with ${json.length} songs`);
+    try {
+      const raw = localStorage.getItem("filteredPlaylist");
+      const parsed = JSON.parse(raw);
+      console.log("📦 Loaded filteredPlaylist with", parsed.length, "songs");
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        songs = parsed;
         currentIndex = 0;
-        playSong(currentIndex);
-      } catch (e) {
-        console.error("❌ Failed to decode base64 filteredPlaylist", e);
+        loadSong(currentIndex);
+      } else {
+        throw new Error("Invalid playlist data");
       }
-    } else {
-      console.warn("⚠️ No filteredPlaylist found in localStorage");
+    } catch (e) {
+      console.error("❌ Failed to parse filtered playlist:", e);
+      fallbackToRickAstley("Invalid playlist data.");
+    }
+  } else if (base64Data) {
+    console.log("🎯 Loading from base64 encoded data");
+    try {
+      const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+      const data = JSON.parse(jsonStr);
+      console.log("📦 Decoded base64 with", data.length, "songs");
+      songs = data.filter(song => song && song.song_title);
+      if (songs.length === 0) throw new Error("Filtered song list is empty.");
+      currentIndex = 0;
+      loadSong(currentIndex);
+    } catch (err) {
+      console.error("❌ Error decoding base64 song data:", err);
+      fallbackToRickAstley("Invalid song data.");
     }
   } else if (playlistFile) {
-    console.log("🎯 Fetching playlist JSON:", `playlists/${playlistFile}`);
-    loadPlaylist(`playlists/${playlistFile}`, nextPlaylist);
+    console.log("🎯 Loading from static playlist file:", playlistFile);
+    fetch(`playlists/${playlistFile}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("📦 Loaded playlist file with", data.length, "songs");
+        songs = data.filter(song => song && song.song_title);
+        if (songs.length === 0) throw new Error("No valid songs");
+        currentIndex = 0;
+        loadSong(currentIndex);
+      })
+      .catch(err => {
+        console.error("❌ Failed to load playlist file:", err);
+        fallbackToRickAstley("Unable to load song data.");
+      });
   } else {
-    console.warn("⚠️ No playlist selected");
-    document.getElementById("songInfo").innerText = "No playlist selected.";
+    console.warn("⚠️ No playlist data found. Falling back.");
+    fallbackToRickAstley("No playlist selected.");
   }
 });
 
+function fallbackToRickAstley(message = '') {
+  const fallbackSong = {
+    song_title: "Never Gonna Give You Up",
+    artist: "Rick Astley",
+    submitter: "Fallback Bot",
+    score: "∞",
+    rank: "1",
+    comments: "You tried to break it, but Rick rolled you instead.",
+    round_name: "Classic Internet Moments",
+    season: "Bonus",
+    spotify_url: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC",
+    youtube_url: `https://www.youtube.com/watch?v=${fallbackVideoId}`
+  };
+
+  songs = [fallbackSong];
+  currentIndex = 0;
+  const songInfoEl = document.getElementById('songInfo');
+  if (songInfoEl && message) songInfoEl.innerText = message;
+  loadSong(currentIndex);
+}
+
+function extractYouTubeID(url) {
+  if (!url) return '';
+  const match = url.match(/(?:[?&]v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : '';
+}
+
+function loadSong(index) {
+  clearInterval(commentInterval);
+  const song = songs[index];
+  if (!song) return console.warn("🚫 No song to load at index", index);
+
+  const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
+  const spotifyUrl = song.spotify_url;
+  const iframe = document.getElementById('ytplayer');
+
+  iframe.src = videoId
+    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`
+    : spotifyUrl
+      ? `https://open.spotify.com/embed/track/${spotifyUrl.split('/track/')[1]}`
+      : `https://www.youtube.com/embed/${fallbackVideoId}?autoplay=1&enablejsapi=1`;
+
+  document.getElementById('categoryTitle').textContent = `${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}`;
+  document.getElementById('artistName').textContent = song.artist || 'Unknown Artist';
+  document.getElementById('songTitle').textContent = song.song_title || 'Unknown Title';
+  document.getElementById('submitter').textContent = song.submitter || 'Unknown';
+  document.getElementById('score').textContent = song.score || 0;
+  document.getElementById('rank').textContent = song.rank || 0;
+
+  const commentBox = document.getElementById("commentBox");
+  const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
+  commentIndex = 0;
+
+  function showNextComment() {
+    commentBox.style.opacity = 0;
+    setTimeout(() => {
+      commentBox.innerText = comments[commentIndex] || '';
+      commentBox.style.opacity = 1;
+      commentIndex = (commentIndex + 1) % comments.length;
+    }, 700);
+  }
+
+  showNextComment();
+  commentInterval = setInterval(showNextComment, 6000);
+  console.log(`🎬 Now playing: ${song.song_title} by ${song.artist} [${index + 1}/${songs.length}]`);
+}
+
+function prevSong() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadSong(currentIndex);
+  }
+}
+
+function nextSong() {
+  if (currentIndex < songs.length - 1) {
+    currentIndex++;
+    loadSong(currentIndex);
+  } else {
+    alert("End of playlist");
+  }
+}
+
+function togglePlayPause() {
+  const iframe = document.getElementById('ytplayer');
+  const func = isPaused ? 'playVideo' : 'pauseVideo';
+  iframe.contentWindow.postMessage(`{"event":"command","func":"${func}","args":""}`, "*");
+  isPaused = !isPaused;
+  document.getElementById('playPauseBtn').innerText = isPaused ? '▶️ Play' : '⏯️ Pause';
+}
+
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('ytplayer', {
+    events: {
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {
+    nextSong();
+  }
+}
