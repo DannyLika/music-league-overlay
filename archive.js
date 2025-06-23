@@ -45,18 +45,29 @@ function getSelectedValues(id) {
   return select ? Array.from(select.selectedOptions).map(opt => opt.value) : [];
 }
 
+function getSearchTerm() {
+  const input = document.getElementById("searchBox");
+  return input ? input.value.trim().toLowerCase() : "";
+}
+
 // Filtering
 function applyFilters() {
   const selectedSeasons = getSelectedValues("seasonFilter");
   const selectedSubmitters = getSelectedValues("submitterFilter");
   const selectedRanks = getSelectedValues("rankFilter");
+  const searchTerm = getSearchTerm();
 
   filteredSongs = masterSongs.filter(song => {
-    return (
+    const matchesFilters =
       (selectedSeasons.length === 0 || selectedSeasons.includes(song.season)) &&
       (selectedSubmitters.length === 0 || selectedSubmitters.includes(song.submitter)) &&
-      (selectedRanks.length === 0 || selectedRanks.includes(song.rank?.toString()))
+      (selectedRanks.length === 0 || selectedRanks.includes(song.rank?.toString()));
+
+    const matchesSearch = searchTerm === "" || Object.values(song).some(val =>
+      String(val).toLowerCase().includes(searchTerm)
     );
+
+    return matchesFilters && matchesSearch;
   });
 
   updateAvailableOptions();
