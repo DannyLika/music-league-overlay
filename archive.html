@@ -18,21 +18,25 @@
     </a>
   </header>
 
-  <!-- Filter Controls -->
-  <div class="archive-controls">
-    <select id="seasonFilter" multiple>
-      <option value="">All Seasons</option>
-    </select>
-    <select id="submitterFilter" multiple>
-      <option value="">All Submitters</option>
-    </select>
-    <select id="rankFilter" multiple>
-      <option value="">All Ranks</option>
-    </select>
-      <button id="applyBtn">Apply Filters</button>
-      <button id="resetBtn">Reset</button>
-      <button id="createBtn">Create Playlist</button>
-  </div>
+<!-- Filter Controls -->
+<div class="archive-controls">
+  <label for="searchBox">Find:</label>
+  <input type="text" id="searchBox" placeholder="Search all fields..." style="margin-right: 12px;" />
+
+  <select id="seasonFilter" multiple>
+    <option value="">All Seasons</option>
+  </select>
+  <select id="submitterFilter" multiple>
+    <option value="">All Submitters</option>
+  </select>
+  <select id="rankFilter" multiple>
+    <option value="">All Ranks</option>
+  </select>
+  
+  <button id="applyBtn">Apply Filters</button>
+  <button id="resetBtn">Reset</button>
+  <button id="createBtn">Create Playlist</button>
+</div>
 
   <div id="resultCount" style="text-align:center; margin-top: 10px;"></div>
   <!-- Archive Table -->
