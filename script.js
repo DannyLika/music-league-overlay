@@ -138,3 +138,35 @@ window.nextSong = nextSong;
 window.prevSong = prevSong;
 window.pauseSong = pauseSong;
 window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("📦 DOM ready");
+
+  const playlistFile = playlist ?? null;
+  const fromFilter = window.location.search.includes("fromFilter=1");
+
+  if (fromFilter) {
+    console.log("🎯 Loading from localStorage (filteredPlaylist)");
+    const base64 = localStorage.getItem("filteredPlaylist");
+    if (base64) {
+      try {
+        const json = JSON.parse(atob(base64));
+        currentPlaylist = json;
+        console.log(`📦 Loaded filteredPlaylist with ${json.length} songs`);
+        currentIndex = 0;
+        playSong(currentIndex);
+      } catch (e) {
+        console.error("❌ Failed to decode base64 filteredPlaylist", e);
+      }
+    } else {
+      console.warn("⚠️ No filteredPlaylist found in localStorage");
+    }
+  } else if (playlistFile) {
+    console.log("🎯 Fetching playlist JSON:", `playlists/${playlistFile}`);
+    loadPlaylist(`playlists/${playlistFile}`, nextPlaylist);
+  } else {
+    console.warn("⚠️ No playlist selected");
+    document.getElementById("songInfo").innerText = "No playlist selected.";
+  }
+});
+
