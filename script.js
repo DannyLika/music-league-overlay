@@ -16,10 +16,27 @@ document.body.appendChild(tag);
 // Get URL Params
 const urlParams = new URLSearchParams(window.location.search);
 const playlistFile = urlParams.get("playlist");
+const fromFilter = urlParams.get("fromFilter");
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 const nextPlaylist = urlParams.get("next");
 
-if (filePath) {
+if (fromFilter === "1") {
+  // Load from localStorage
+  try {
+    const filtered = JSON.parse(localStorage.getItem("filteredPlaylist"));
+    if (Array.isArray(filtered) && filtered.length > 0) {
+      songs = filtered;
+      currentIndex = 0;
+      loadSong(currentIndex);
+    } else {
+      console.warn("Filtered playlist in localStorage is empty or invalid. Fallback triggered.");
+      fallbackToRickAstley("No filtered playlist found.");
+    }
+  } catch (e) {
+    console.error("Error loading filtered playlist from localStorage", e);
+    fallbackToRickAstley("Unable to load filtered playlist.");
+  }
+} else if (filePath) {
   loadPlaylist(filePath, nextPlaylist);
 } else {
   fallbackToRickAstley("No playlist selected.");
@@ -88,18 +105,40 @@ function loadSong(index) {
   const videoId = extractYouTubeID(song.youtube_url) || fallbackVideoId;
   const spotifyUrl = song.spotify_url;
 
-  // Update song info display
+  // Update song info display (add Rank)
   document.getElementById('songInfo').innerHTML = `
     <h2>${song.season || 'Unknown Season'} - ${song.round_name || 'Unknown Round'}</h2>
     <p><strong>Artist:</strong> ${song.artist || 'Unknown Artist'}</p>
     <p><strong>Song:</strong> <span class="highlight">${song.song_title || 'Unknown Title'}</span></p>
     <p><strong>Submitter:</strong> ${song.submitter || 'Unknown'}</p>
     <p><strong>Score:</strong> ${song.score || 0}</p>
+    <p><strong>Rank:</strong> ${song.rank !== undefined ? song.rank : 'N/A'}</p>
   `;
 
-  // Handle comments
+  // Handle comments (improved for top 3 playlists)
   const commentBox = document.getElementById("commentBox");
-  const comments = song.comments ? song.comments.split('\n') : ['No comments available'];
+  let comments = [];
+  if (typeof song.comments === "string" && song.comments.includes(':')) {
+    // Parse master_songs style: Voter: score: comment | ...
+    comments = song.comments.split('|').map(line => {
+      const parts = line.trim().split(':');
+      if (parts.length >= 3) {
+        // Voter: score: comment
+        return `${parts[0].trim()}: ${parts[1].trim()}: ${parts.slice(2).join(':').trim()}`;
+      } else if (parts.length === 2) {
+        // Voter: comment
+        return `${parts[0].trim()}: ${parts[1].trim()}`;
+      }
+      return line.trim();
+    }).filter(Boolean);
+  } else if (typeof song.comments === "string") {
+    // Fallback: split by newline, show as-is
+    comments = song.comments.split('\n').map(line => line.trim()).filter(Boolean);
+  } else if (Array.isArray(song.comments)) {
+    comments = song.comments;
+  } else {
+    comments = ['No comments available'];
+  }
   commentIndex = 0;
 
   function showNextComment() {
