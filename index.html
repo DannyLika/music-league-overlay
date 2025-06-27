@@ -6,7 +6,6 @@
   <title>Music League Player</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Page-wide styles for layout and branding */
     body {
       background-color: #121212;
       color: #fff;
@@ -21,14 +20,14 @@
       text-align: center;
     }
 
-    h1 {
-      font-size: 2.2em;
-      margin-bottom: 20px;
-    }
-
     .logo {
       height: 80px;
       margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
     }
 
     select {
@@ -50,14 +49,27 @@
       background-color: #fff;
       color: #000;
     }
+
+    .archive-link {
+      margin-top: 25px;
+      font-size: 1em;
+    }
+
+    .archive-link a {
+      color: #1db954;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .archive-link a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <!-- Logo and page title -->
   <img src="mlp-logo.png" alt="Music League Player Logo" class="logo" />
   <h1>Select a Playlist to Begin</h1>
 
-  <!-- Playlist dropdown menu -->
   <select onchange="goToPlaylist(this)">
     <option disabled selected value="">-- Choose a Playlist --</option>
     <option value="Spring2025_Top3.json">Spring 2025 Top 3</option>
@@ -72,12 +84,14 @@
     <option value="Summer2020_Top3.json">Summer 2020 Top 3</option>
   </select>
 
-  <!-- Script to route to the selected playlist -->
+  <div class="archive-link">
+    <p><a href="archive.html">🎼 Browse the Full Archive and Create Custom Playlists</a></p>
+  </div>
+
   <script>
     function goToPlaylist(select) {
       const file = select.value;
       if (file) {
-        // Navigate to the player with the selected playlist
         window.location.href = `player.html?playlist=${file}`;
       }
     }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music League Archive</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- DataTables CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="index.html" class="logo-link">
+      <img src="mlp-logo.png" alt="Music League Logo" class="logo" />
+      <span class="brand-text">Music League Player</span>
+    </a>
+  </header>
+
+<!-- Filter Controls -->
+<div class="archive-controls">
+  <label for="searchBox">Find:</label>
+  <input type="text" id="searchBox" placeholder="Search all fields..." style="margin-right: 12px;" />
+
+  <select id="seasonFilter" multiple>
+    <option value="">All Seasons</option>
+  </select>
+  <select id="submitterFilter" multiple>
+    <option value="">All Submitters</option>
+  </select>
+  <select id="rankFilter" multiple>
+    <option value="">All Ranks</option>
+  </select>
+  
+  <button id="applyBtn">Apply Filters</button>
+  <button id="resetBtn">Reset</button>
+  <button id="createBtn">Create Playlist</button>
+</div>
+
+  <div id="resultCount" style="text-align:center; margin-top: 10px;"></div>
+  <!-- Archive Table -->
+  <div class="archive-table-container">
+    <table id="songTable" class="archive-table display">
+      <thead>
+        <tr>
+          <th>Season</th>
+          <th>Round</th>
+          <th>Title</th>
+          <th>Artist</th>
+          <th>Submitter</th>
+          <th>Score</th>
+          <th>Rank</th>
+        </tr>
+      </thead>
+      <tbody id="songTableBody">
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal for Playlist Creation -->
+  <div id="playlistModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Create Playlist</h3>
+      <p id="filterSummary">Create a new playlist using the following filters?</p>
+      <input type="text" id="playlistName" placeholder="Name it (optional)" />
+      <div class="modal-actions">
+        <button onclick="createPlaylist()">Create & Play</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="archive.js"></script>
+</body>
+</html>
