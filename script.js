@@ -16,10 +16,27 @@ document.body.appendChild(tag);
 // Get URL Params
 const urlParams = new URLSearchParams(window.location.search);
 const playlistFile = urlParams.get("playlist");
+const fromFilter = urlParams.get("fromFilter");
 const filePath = playlistFile ? `playlists/${playlistFile}` : null;
 const nextPlaylist = urlParams.get("next");
 
-if (filePath) {
+if (fromFilter === "1") {
+  // Load from localStorage
+  try {
+    const filtered = JSON.parse(localStorage.getItem("filteredPlaylist"));
+    if (Array.isArray(filtered) && filtered.length > 0) {
+      songs = filtered;
+      currentIndex = 0;
+      loadSong(currentIndex);
+    } else {
+      console.warn("Filtered playlist in localStorage is empty or invalid. Fallback triggered.");
+      fallbackToRickAstley("No filtered playlist found.");
+    }
+  } catch (e) {
+    console.error("Error loading filtered playlist from localStorage", e);
+    fallbackToRickAstley("Unable to load filtered playlist.");
+  }
+} else if (filePath) {
   loadPlaylist(filePath, nextPlaylist);
 } else {
   fallbackToRickAstley("No playlist selected.");
