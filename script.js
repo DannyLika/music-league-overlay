@@ -119,15 +119,20 @@ function loadSong(index) {
   const commentBox = document.getElementById("commentBox");
   let comments = [];
   if (typeof song.comments === "string" && song.comments.includes(':')) {
-    // Parse master_songs style: Voter: score: comment | ...
+    // Parse master_songs style: Submitter: points: comment | ...
     comments = song.comments.split('|').map(line => {
       const parts = line.trim().split(':');
       if (parts.length >= 3) {
-        // Voter: score: comment
-        return `${parts[0].trim()}: ${parts[1].trim()}: ${parts.slice(2).join(':').trim()}`;
+        // Submitter: points: comment
+        const submitter = parts[0].trim();
+        const points = parts[1].trim();
+        const comment = parts.slice(2).join(':').trim();
+        return `Submitter: ${submitter} - ${comment ? comment : ''} - points: ${points}`;
       } else if (parts.length === 2) {
-        // Voter: comment
-        return `${parts[0].trim()}: ${parts[1].trim()}`;
+        // Submitter: comment
+        const submitter = parts[0].trim();
+        const comment = parts[1].trim();
+        return `Submitter: ${submitter} - ${comment}`;
       }
       return line.trim();
     }).filter(Boolean);
