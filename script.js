@@ -127,7 +127,11 @@ function loadSong(index) {
         const submitter = parts[0].trim();
         const points = parts[1].trim();
         const comment = parts.slice(2).join(':').trim();
-        return `Submitter: ${submitter} - ${comment ? comment : ''} - points: ${points}`;
+        if (comment) {
+          return `Submitter: ${submitter} - ${comment} - points: ${points}`;
+        } else {
+          return `Submitter: ${submitter} - points: ${points}`;
+        }
       } else if (parts.length === 2) {
         // Submitter: comment
         const submitter = parts[0].trim();
