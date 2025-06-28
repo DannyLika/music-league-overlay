@@ -262,7 +262,6 @@ body {
   overflow-y: auto;
 }
 
-
 .video-wrapper {
   display: flex;
   justify-content: center;
@@ -299,6 +298,7 @@ body {
   background: #111;
   border-left: 3px solid #1db954;
   border-radius: 8px;
+  font-size: clamp(1.2em, 2vw, 2.8em);
 }
 
 /* Green button styles (shared across pages) */
