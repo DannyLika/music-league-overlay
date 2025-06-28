@@ -144,9 +144,9 @@ function loadSong(index) {
   function showNextComment() {
     commentBox.style.opacity = 0;
     const comment = comments[commentIndex] || '';
-    // Calculate display time: 2.5s minimum, longer for longer comments
-    const minTime = 2500;
-    const perChar = 40; // ms per character
+    // Calculate display time: 3.5s minimum, longer for longer comments
+    const minTime = 3500;
+    const perChar = 60; // ms per character
     const displayTime = Math.max(minTime, comment.length * perChar);
     setTimeout(() => {
       commentBox.innerText = comment;
