@@ -143,15 +143,21 @@ function loadSong(index) {
 
   function showNextComment() {
     commentBox.style.opacity = 0;
+    const comment = comments[commentIndex] || '';
+    // Calculate display time: 2.5s minimum, longer for longer comments
+    const minTime = 2500;
+    const perChar = 40; // ms per character
+    const displayTime = Math.max(minTime, comment.length * perChar);
     setTimeout(() => {
-      commentBox.innerText = comments[commentIndex] || '';
+      commentBox.innerText = comment;
       commentBox.style.opacity = 1;
       commentIndex = (commentIndex + 1) % comments.length;
+      // Schedule next comment
+      commentInterval = setTimeout(showNextComment, displayTime);
     }, 700);
   }
 
   showNextComment();
-  commentInterval = setInterval(showNextComment, 6000);
 
   // Load video using YouTube IFrame API
   if (ytPlayer && ytPlayer.loadVideoById) {
