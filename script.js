@@ -136,7 +136,7 @@ function loadSong(index) {
         // Submitter: comment
         const submitter = parts[0].trim();
         const comment = parts[1].trim();
-        return `Submitter: ${submitter} - ${comment}`;
+        return `${submitter} - ${comment}`;
       }
       return line.trim();
     }).filter(Boolean);
